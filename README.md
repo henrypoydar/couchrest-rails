@@ -1,6 +1,6 @@
-# couchrest-rails
+# CouchRest-Rails
 
-A Rails plugin for connecting to and working with a CouchDB document store via couchrest.
+A Rails plugin for connecting to and working with a [CouchDB](http://couchdb.apache.org) document-oriented database via the [CouchRest](http://github.com/jchris/couchrest) RESTful CouchDB client.
 
 ## TODO
 
