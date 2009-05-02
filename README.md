@@ -2,6 +2,10 @@
 
 A Rails plugin for connecting to and working with a [CouchDB](http://couchdb.apache.org) document-oriented database via the [CouchRest](http://github.com/jchris/couchrest) RESTful CouchDB client.
 
+# Usage
+
+TODO 
+
 ## TODO
 
 * generate files via install.rb and generate method
@@ -13,6 +17,7 @@ A Rails plugin for connecting to and working with a [CouchDB](http://couchdb.apa
 ** timestamp hooks
 ** basic views?
 * document usage
+* gemify
 
 ## License
 
