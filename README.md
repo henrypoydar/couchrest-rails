@@ -4,6 +4,7 @@ A Rails plugin for connecting to and working with a CouchDB document store via c
 
 ## TODO
 
+* generate files via install.rb and generate method
 * couch.yml setup
 * rake tasks - view syncs
 * rake tasks - test setup/teardown
