@@ -41,9 +41,17 @@ describe 'rake tasks' do
   
   describe 'couchdb:reset' do
     
+    it 'should drop and add the database' do
+      
+    end
+    
   end
   
   describe 'couchdb:test:reset' do
+    
+    it 'should drop and the database for the test environment only' do
+      
+    end
     
   end
   

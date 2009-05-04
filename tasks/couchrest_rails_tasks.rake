@@ -16,7 +16,7 @@ namespace :couchdb do
   task :drop => :environment do
     cr = CouchRest.new(COUCHDB_SERVER[:host])
     db = cr.database(COUCHDB_SERVER[:database])
-    db.delete! rescue nil
+    db.delete!
   end
   
   desc "Drops and recreates the couchdb database for the current RAILS_ENV"
