@@ -1,8 +1,8 @@
 Description:
-    Explain the generator
+    Generates the files needed for your Rails application to connect to and work with a CouchDB database over CouchRest.
 
 Example:
-    ./script/generate couchrest_rails Thing
+    ./script/generate couchrest_rails relax
 
     This will create:
-        what/will/it/create
+        config/initializers/couchdb.rb

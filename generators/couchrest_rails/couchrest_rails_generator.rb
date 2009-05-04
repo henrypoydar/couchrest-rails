@@ -1,8 +1,7 @@
 class CouchrestRailsGenerator < Rails::Generator::NamedBase
   def manifest
     record do |m|
-      # m.directory "lib"
-      # m.template 'README', "README"
+      m.template "couchdb_initializer.rb", "config/initializers/couchdb.rb"
     end
   end
 end

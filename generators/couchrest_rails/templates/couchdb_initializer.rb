@@ -9,6 +9,6 @@ database  = couchdb_config[ENV['RAILS_ENV']]["database"]
 host     = "localhost"  if host == nil
 port     = "5984"       if port == nil
  
-Rails.logger.error("No database specified in config/couchdb.yml")  if database == nil
+Rails.logger.error("No database specified in config/couchdb.yml") if database == nil
 
 COUCHDB_SERVER = {:host => host, :port => port, :database => database}
