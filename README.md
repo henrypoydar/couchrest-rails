@@ -6,6 +6,7 @@ Specifically, this plugin provides the following utilities:
 
 * Initializer for use with a couchdb.yml configuration file
 * CouchDB specific rake tasks
+* Setup and teardown helpers for spec'ing and testing
 
 This plugin currently assumes your application only uses one CouchDB database.  It does not interfere with the traditional relational database backend, so you can use that as a datastore alongside CouchDB if you want.  (In fact, you'll have to unwire the requirement for a relational database if you don't want to use one.)
 
@@ -34,6 +35,11 @@ Use the rake tasks to create, drop, reset, sync views and load fixtures:
 
     rake -T | grep couchdb
     
+For testing or spec'ing, use these helpers to setup and teardown a test database with fixtures:
+
+    CouchrestRails::Tests.setup
+    CouchrestRails::Tests.teardown
+
 
 ## Further development and testing
 
