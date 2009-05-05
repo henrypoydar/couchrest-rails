@@ -1,2 +1,2 @@
+require 'couchrest_rails'
 config.gem 'couchrest'
-config.gem 'json'

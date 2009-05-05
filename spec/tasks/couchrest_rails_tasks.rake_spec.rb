@@ -35,24 +35,46 @@ describe 'rake tasks' do
       res.should be_nil
     end
     
+    it 'should do nothing and display a message if the database does not exist' do
+      res = `cd #{RAILS_ROOT}; RAILS_ENV=#{ENV['RAILS_ENV']} rake couchdb:drop`
+      res.should =~ /does not exist/i
+    end
+    
   end
   
   describe 'couchdb:reset' do
     
     it 'should drop and add the database' do
-      
+      `cd #{RAILS_ROOT}; RAILS_ENV=#{ENV['RAILS_ENV']} rake couchdb:reset`
+      res = CouchRest.get(COUCHDB_SERVER[:instance]) rescue nil
+      res['db_name'].should == COUCHDB_SERVER[:database]
     end
     
   end
   
   describe 'couchdb:test:reset' do
     
-    it 'should drop and the database for the test environment only' do
-      
+    it 'should drop and add the database for the test environment only' do
+      `cd #{RAILS_ROOT}; RAILS_ENV=development rake couchdb:test:reset`
+      res = CouchRest.get(COUCHDB_SERVER[:instance]) rescue nil
+      res['db_name'].should == COUCHDB_SERVER[:database]
+    end
+    
+  end
+  
+  describe 'couchdb:fixtures:load' do
+    
+    it "should exit if the database doesn't exist" do
+      res = `cd #{RAILS_ROOT}; RAILS_ENV=#{ENV['RAILS_ENV']} rake couchdb:fixtures:load`
+      res.should =~ /does not exist/i
+    end
+    
+    it 'should load up the yaml files in <RAILS_ROOT>/db/couchdb/fixtures' do
+      db = CouchRest.database!(COUCHDB_SERVER[:instance])
+      `cd #{RAILS_ROOT}; RAILS_ENV=#{ENV['RAILS_ENV']} FIXTURES_PATH=vendor/plugins/couchrest-rails/spec/fixtures/couchdb rake couchdb:fixtures:load`
+      db.documents['rows'].size.should == 10
     end
     
   end
   
 end
-  
-
