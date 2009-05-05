@@ -14,6 +14,7 @@
 
 <% 10.times do |i| %>
 record_<%= i %>:
+  type: FooBar
   title: <%= blurbs.sort_by {rand}.first.split('.').first %>
   body: <%= blurbs.sort_by {rand}.first %>
   tags: <%= blurbs.sort_by {rand}.first.split(' ').sort_by {rand}[0..3].map {|e| e.downcase.gsub('.', '').strip}.inspect %>
