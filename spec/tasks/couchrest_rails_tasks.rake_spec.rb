@@ -69,11 +69,10 @@ describe 'rake tasks' do
       res.should =~ /does not exist/i
     end
     
-    it 'should attempt to load up the Yaml files in <RAILS_ROOT>/db/couchdb/fixtures' do
+    it 'should load up the yaml files in <RAILS_ROOT>/db/couchdb/fixtures' do
+      db = CouchRest.database!(COUCHDB_SERVER[:instance])
       `cd #{RAILS_ROOT}; RAILS_ENV=#{ENV['RAILS_ENV']} FIXTURES_PATH=vendor/plugins/couchrest-rails/spec/fixtures/couchdb rake couchdb:fixtures:load`
-      db = CouchRest.database(COUCHDB_SERVER[:instance])
-      puts db.documents.inspect 
-      db.documents.size.should == 9 
+      db.documents['rows'].size.should == 10
     end
     
   end

@@ -4,7 +4,7 @@ require 'rails_generator/scripts/generate'
 
 describe 'CouchrestRails' do
 
-  describe 'installation' do
+  describe 'plugin installation' do
     
     before :all do
       @fake_rails_root = File.join(File.dirname(__FILE__), 'rails_root')
