@@ -1,7 +1,7 @@
 module CouchrestRails
   module Tests
-    
-    extend self;
+  
+    extend self
   
     def setup
       ENV['RAILS_ENV'] = CouchrestRails.test_environment

@@ -14,8 +14,10 @@ This plugin currently assumes your application only uses one CouchDB database.  
 ## Requirements
 
 * [CouchRest gem](http://github.com/jchris/couchrest)
+* [couchapp](http://github.com/djchris/couchrest) There is a Ruby and Python version of this application. Currently, the Python version is winning.
 * [RSpec](http://github.com/dchelimsky/rspec) BDD framework (optional - for running plugin specs)
 * [RSpec-Rails](http://github.com/dchelimsky/rspec-rails) library (optional - for running plugin specs)
+
 
 ## Installation and usage
 
@@ -40,7 +42,13 @@ For testing or spec'ing, use these helpers to setup and teardown a test database
 
     CouchrestRails::Tests.setup
     CouchrestRails::Tests.teardown
+    
+Views that you want to push up to the CouchDB database/server instance should be in the following format:
 
+    db/couch/views
+    |-- <view_name>
+        |-- map.js
+        `-- reduce.js
 
 ## Further development and testing
 
@@ -54,14 +62,16 @@ To run the test suite, you'll need rspec installed with rspec-rails library enab
 
 ## TODO
 
-* Sync views with rake tasks
-* CouchDocument model for extending (timestamp hooks, basic views, validation?)
+* Push views with rake tasks
+* Shelling out to couchapp to push views seems ... wrong. Do it natively with CouchRest
+* A thin CouchDocument class around Couchrest::ExtendedDocument for extending (timestamp hooks, basic views, validation?)
 * Documentation
 * Restrict model to default attributes and their types?
 * Mechanism for better view testing?
 * Gemify
 * Add more parseable options to couchdb.yml
 * Expand beyond a single database per application
+* Handle design document items other than views (we're shelling out to couchapp after all)
 
 ## License
 
