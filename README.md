@@ -54,9 +54,7 @@ To run the test suite, you'll need rspec installed with rspec-rails library enab
 ## TODO
 
 * Sync views with rake tasks
-* CouchDocument model for extending
-** Timestamp hooks
-** Basic views?
+* CouchDocument model for extending (timestamp hooks, basic views, validation?)
 * Documentation
 * Restrict model to default attributes and their types?
 * Mechanism for better view testing?
