@@ -53,18 +53,16 @@ To run the test suite, you'll need rspec installed with rspec-rails library enab
 
 ## TODO
 
-* rake tasks - view syncs
-* rake tasks - test setup/teardown
-* rake tasks - fixtures
+* Sync views with rake tasks
 * CouchDocument model for extending
-** timestamp hooks
-** basic views?
-* document usages
-* restrict model to default attributes and their types?
-* test views?
-* gemify
+** Timestamp hooks
+** Basic views?
+* Documentation
+* Restrict model to default attributes and their types?
+* Mechanism for better view testing?
+* Gemify
 * Add more parseable options to couchdb.yml
-* Expand beyond a single database per applicatipn
+* Expand beyond a single database per application
 
 ## License
 
