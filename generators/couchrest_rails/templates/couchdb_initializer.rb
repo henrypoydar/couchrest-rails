@@ -1,10 +1,12 @@
 begin
   
-  couchdb_config = YAML::load(ERB.new(IO.read(RAILS_ROOT + "/config/couchdb.yml")).result)[ENV['RAILS_ENV']]
+  env = ENV['RAILS_ENV'] || 'development'
+  
+  couchdb_config = YAML::load(ERB.new(IO.read(RAILS_ROOT + "/config/couchdb.yml")).result)[env]
 
   host      = couchdb_config["host"]      || 'localhost'
   port      = couchdb_config["port"]      || '5984'
-  database  = couchdb_config["database"]  
+  database  = couchdb_config["database"]
   username  = couchdb_config["username"]
   password  = couchdb_config["password"]
   ssl       = couchdb_config["ssl"]       || false
@@ -21,11 +23,11 @@ begin
 rescue
   
   raise "There was a problem with your config/couchdb.yml file. Check and make sure it's present and the syntax is correct."
-
+ 
 else
   
   COUCHDB_SERVER = {
-    :host => "#{protocol}://#{authorized_host}:#{port}", 
+    :uri => "#{protocol}://#{authorized_host}:#{port}", 
     :database => database, 
     :instance => "#{protocol}://#{authorized_host}:#{port}/#{database}"
   }

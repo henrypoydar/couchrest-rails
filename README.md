@@ -7,12 +7,11 @@ Specifically, this plugin provides the following utilities:
 * Initializer for use with a couchdb.yml configuration file
 * CouchDB specific rake tasks
 
-Important: This plugin assumes your application only uses one CouchDB database.
+This plugin currently assumes your application only uses one CouchDB database.  It does not interfere with the traditional relational database backend, so you can use that as a datastore alongside CouchDB if you want.  (In fact, you'll have to unwire the requirement for a relational database if you don't want to use one.)
 
 ## Requirements
 
 * [CouchRest gem](http://github.com/jchris/couchrest)
-* JSON gem
 * [RSpec](http://github.com/dchelimsky/rspec) BDD framework (optional - for running plugin specs)
 * [RSpec-Rails](http://github.com/dchelimsky/rspec-rails) library (optional - for running plugin specs)
 
@@ -33,6 +32,8 @@ To run the test suite, you'll need rspec installed with rspec-rails library enab
     <rails_root>$ rake spec:plugins
     <plugin_root>$ rake spec
     <plugin_root>$ autospec
+    
+(The latter requires the ZenTest gem)
 
 ## TODO
 
