@@ -1,6 +1,4 @@
 require File.dirname(__FILE__) + '/../spec_helper'
-require 'net/http'
-require 'json'
 
 describe 'rake tasks' do
   

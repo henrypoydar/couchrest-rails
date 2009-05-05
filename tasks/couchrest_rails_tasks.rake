@@ -1,5 +1,3 @@
-require 'json'
-
 namespace :couchdb do
   
   desc "Create the CouchDB database defined in config/couchdb.yml for the current environment"
