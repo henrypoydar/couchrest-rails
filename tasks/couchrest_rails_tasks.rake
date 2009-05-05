@@ -14,7 +14,7 @@ namespace :couchdb do
   task :reset => [:drop, :create]
   
   namespace :test do
-    desc "Empty the test couchdb database"
+    desc "Empty the test CouchDB database"
     task :reset do
       `rake RAILS_ENV=test couchdb:drop`
       `rake RAILS_ENV=test couchdb:create`

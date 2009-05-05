@@ -3,7 +3,11 @@ require 'rails_generator'
 require 'rails_generator/scripts/generate'
 
 describe 'CouchrestRails' do
-
+  
+  after :all do
+    CouchRest.delete(COUCHDB_SERVER[:instance]) rescue nil
+  end
+  
   describe 'plugin installation' do
     
     before :all do
@@ -48,6 +52,10 @@ describe 'CouchrestRails' do
 end
   
 describe 'CouchrestRails::Fixtures' do
+  
+  after :all do
+    CouchRest.delete(COUCHDB_SERVER[:instance]) rescue nil
+  end
     
   describe '#blurbs' do
     
@@ -83,6 +91,10 @@ describe 'CouchrestRails::Fixtures' do
 end
 
 describe 'CouchrestRails::Tests' do
+  
+  after :all do
+    CouchRest.delete(COUCHDB_SERVER[:instance]) rescue nil
+  end
   
   before :each do
     CouchRest.delete(COUCHDB_SERVER[:instance]) rescue nil
