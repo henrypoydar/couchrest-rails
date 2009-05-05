@@ -19,11 +19,21 @@ This plugin currently assumes your application only uses one CouchDB database.  
 
 Install with the native Rails plugin installation script:
 
-    script/plugin install
+    script/plugin install git://github.com/hpoydar/couchrest-rails.git
 
 Or simply add to vendor/plugins and generate the files you need:
 
     script/generate couchrest_rails relax
+    
+The plugin creates two folders:
+
+* `db/couchdb/views` - for storing CouchDB map and reduce functions
+* `db/couchdb/fixtures` - for storing CouchDB fixtures (yaml)
+    
+Use the rake tasks to create, drop, reset, sync views and load fixtures:
+
+    rake -T | grep couchdb
+    
 
 ## Further development and testing
 
