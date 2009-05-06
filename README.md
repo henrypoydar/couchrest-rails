@@ -31,8 +31,13 @@ Or simply add to vendor/plugins and generate the files you need:
     
 The plugin creates two folders:
 
-* `db/couchdb/views` - for storing CouchDB map and reduce functions
-* `db/couchdb/fixtures` - for storing CouchDB fixtures (yaml)
+* `db/couch/fixtures` - for storing CouchDB fixtures (yaml)
+* `db/couch/views` - for storing CouchDB map and reduce functions
+
+These paths can be customized in an initializer or environment configuration file:
+
+    CouchrestRails.fixtures_path  = 'custom/path/to/your/fixtures/from/app/root'
+    CouchrestRails.views_path     = 'custom/path/to/your/views/from/app/root'
     
 Use the rake tasks to create, drop, reset, sync views and load fixtures:
 
@@ -71,7 +76,7 @@ To run the test suite, you'll need rspec installed with rspec-rails library enab
 * Gemify
 * Add more parseable options to couchdb.yml
 * Expand beyond a single database per application
-* Handle design document items other than views (we're shelling out to couchapp after all)
+* Currently assumes one design document per application--expand
 
 ## License
 

@@ -13,7 +13,7 @@ module CouchrestRails
       res << "Donec placerat. Nullam nibh dolor, blandit sed, fermentum id, imperdiet sit amet, neque. Nam mollis ultrices justo. Sed tempor. Sed vitae tellus. Etiam sem arcu, eleifend sit amet, gravida eget, porta at, wisi. Nam non lacus vitae ipsum viverra pretium. Phasellus massa. Fusce magna sem, gravida in, feugiat ac, molestie eget, wisi. Fusce consectetuer luctus ipsum. Vestibulum nunc. Suspendisse dignissim adipiscing libero. Integer leo. Sed pharetra ligula a dui. Quisque ipsum nibh, ullamcorper eget, pulvinar sed, posuere vitae, nulla. Sed varius nibh ut lacus. Curabitur fringilla. Nunc est ipsum, pretium quis, dapibus sed, varius non, lectus. Proin a quam. Praesent lacinia, eros quis aliquam porttitor, urna lacus volutpat urna, ut fermentum neque mi egestas dolor."
     end
     
-    def load(fixtures_path = ENV['FIXTURES_PATH'])
+    def load
       
       res = CouchRest.get(COUCHDB_SERVER[:instance]) rescue nil
       unless (res && res['db_name'] && res['db_name'] == COUCHDB_SERVER[:database])
@@ -22,9 +22,8 @@ module CouchrestRails
 
       db = CouchRest.database!(COUCHDB_SERVER[:instance])
 
-      fixtures_path ||= 'db/couch/fixtures'
       fixture_files = []
-      Dir.glob(File.join(RAILS_ROOT, fixtures_path, "**", "*.yml")).each do |file|
+      Dir.glob(File.join(RAILS_ROOT, CouchrestRails.fixtures_path, "**", "*.yml")).each do |file|
         db.bulk_save(YAML::load(ERB.new(IO.read(file)).result).map {|f| f[1]})
         fixture_files << File.basename(file)
       end
@@ -36,7 +35,6 @@ module CouchrestRails
       end
     
     end
-    
   
     def random_blurb
       blurbs.sort_by {rand}.first

@@ -5,6 +5,12 @@ module CouchrestRails
   mattr_accessor :test_environment
   self.test_environment = 'test'
   
+  mattr_accessor :fixtures_path
+  self.fixtures_path = 'db/couch/fixtures'
+  
+  mattr_accessor :views_path
+  self.views_path = 'db/couch/views'
+  
   def create
     res = CouchRest.get(COUCHDB_SERVER[:instance]) rescue nil
     if res && res['db_name'] && res['db_name'] == COUCHDB_SERVER[:database]

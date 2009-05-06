@@ -7,7 +7,7 @@ module CouchrestRails
       ENV['RAILS_ENV'] = CouchrestRails.test_environment
       CouchrestRails.drop
       CouchrestRails.create
-      CouchrestRails::Fixtures.load(ENV['FIXTURES_PATH'])
+      CouchrestRails::Fixtures.load
     end
     
     def teardown

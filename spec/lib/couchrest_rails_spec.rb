@@ -80,9 +80,10 @@ describe 'CouchrestRails::Fixtures' do
       res.should =~ /does not exist/i
     end
 
-    it "should load up the yaml files in (ENV['fixtures_path'] || db/couch/fixtures) as documents" do
+    it "should load up the yaml files in CouchrestRails.fixtures_path as documents" do
       db = CouchRest.database!(COUCHDB_SERVER[:instance])
-      CouchrestRails::Fixtures.load('vendor/plugins/couchrest-rails/spec/mocks/fixtures')
+      CouchrestRails.fixtures_path = 'vendor/plugins/couchrest-rails/spec/mock/fixtures'
+      CouchrestRails::Fixtures.load
       db.documents['rows'].size.should == 10
     end
   
@@ -94,7 +95,7 @@ describe 'CouchrestRails::Tests' do
   
   before :each do
     CouchRest.delete(COUCHDB_SERVER[:instance]) rescue nil
-    ENV['FIXTURES_PATH'] = 'vendor/plugins/couchrest-rails/spec/mocks/fixtures'
+    CouchrestRails.fixtures_path = 'vendor/plugins/couchrest-rails/spec/mock/fixtures'
   end
   
   after :all do
@@ -106,7 +107,7 @@ describe 'CouchrestRails::Tests' do
     it 'should drop, add and load fixtures for the test database' do
       CouchrestRails.create
       db = CouchRest.database(COUCHDB_SERVER[:instance])
-      CouchrestRails::Fixtures.load(ENV['FIXTURES_PATH'])
+      CouchrestRails::Fixtures.load
       db.documents['rows'].size.should == 10
       CouchrestRails::Tests.setup
       db.documents['rows'].size.should == 10
@@ -132,7 +133,8 @@ describe "CouchrestRails::Views" do
   
   before :each do
     CouchRest.delete(COUCHDB_SERVER[:instance]) rescue nil
-    ENV['VIEWS_PATH'] = 'vendor/plugins/couchrest-rails/spec/mocks'
+    CouchrestRails.views_path = 'vendor/plugins/couchrest-rails/spec/mock/views'
+    CouchrestRails.fixtures_path = 'vendor/plugins/couchrest-rails/spec/mock/fixtures'
     CouchrestRails.create
   end
   
@@ -140,10 +142,11 @@ describe "CouchrestRails::Views" do
     CouchRest.delete(COUCHDB_SERVER[:instance]) rescue nil
   end
   
-  it "should push the views in (ENV['VIEWS_PATH'] || db/couch/views) to a design document for the database" do
+  it "should push the views in CouchrestRails.views_path to a design document for the database" do
     db = CouchRest.database(COUCHDB_SERVER[:instance])
     CouchrestRails::Views.push
-    db.view('mocks/foos')['rows'].inspect.should == 'FIXME: views'
+    CouchrestRails::Fixtures.load
+    db.view('application/foos')['rows'].size.should == 5
   end
   
 end
