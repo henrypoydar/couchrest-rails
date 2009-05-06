@@ -36,8 +36,8 @@ The plugin creates two folders:
 
 These paths can be customized in an initializer or environment configuration file:
 
-    CouchrestRails.fixtures_path  = 'custom/path/to/your/fixtures/from/app/root'
-    CouchrestRails.views_path     = 'custom/path/to/your/views/from/app/root'
+    CouchRestRails.fixtures_path  = 'custom/path/to/your/fixtures/from/app/root'
+    CouchRestRails.views_path     = 'custom/path/to/your/views/from/app/root'
     
 ## Usage    
 
@@ -47,8 +47,8 @@ Use the rake tasks to create, drop, reset, push views and load fixtures:
     
 For testing or spec'ing, use these helpers to setup and teardown a test database with fixtures:
 
-    CouchrestRails::Tests.setup
-    CouchrestRails::Tests.teardown
+    CouchRestRails::Tests.setup
+    CouchRestRails::Tests.teardown
     
 Views that you want to push up to the CouchDB database/server instance should be in the following format:
 
@@ -57,7 +57,7 @@ Views that you want to push up to the CouchDB database/server instance should be
         |-- map.js
         `-- reduce.js
         
-Push up your views via rake (`rake couchdb:views:push`) or within your code or console (`CouchrestRails::Views.push`).
+Push up your views via rake (`rake couchdb:views:push`) or within your code or console (`CouchRestRails::Views.push`).
 
 For models, inherit from CouchRestRails::Document, which hooks up CouchRest::ExtendedDocument to your CouchDB backend:
 
