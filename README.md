@@ -5,7 +5,7 @@ A Rails plugin for connecting to and working with a [CouchDB](http://couchdb.apa
 Specifically, this plugin provides the following utilities:
 
 * Initializer for use with a couchdb.yml configuration file
-* CouchDB-specific rake tasks
+* CouchDB-specific rake tasks (database creation, dropping, fixture loading, views synchronization)
 * CouchDB-specific fixtures
 * Setup and teardown helpers for spec'ing and testing
 
@@ -14,7 +14,6 @@ This plugin currently assumes your application only uses one CouchDB database.  
 ## Requirements
 
 * [CouchRest gem](http://github.com/jchris/couchrest)
-* [couchapp](http://github.com/djchris/couchrest) There is a Ruby and Python version of this application. Currently, the Python version is winning.
 * [RSpec](http://github.com/dchelimsky/rspec) BDD framework (optional - for running plugin specs)
 * [RSpec-Rails](http://github.com/dchelimsky/rspec-rails) library (optional - for running plugin specs)
 
@@ -54,6 +53,8 @@ Views that you want to push up to the CouchDB database/server instance should be
     |-- <view_name>
         |-- map.js
         `-- reduce.js
+        
+Push up your views via rake (`rake couchdb:views:push`) or within your code or console (`CouchrestRails::Views.push`).
 
 ## Further development and testing
 
@@ -67,10 +68,8 @@ To run the test suite, you'll need rspec installed with rspec-rails library enab
 
 ## TODO
 
-* Push views with rake tasks
-* Shelling out to couchapp to push views seems ... wrong. Do it natively with CouchRest
+* A persistent connection object?
 * A thin CouchDocument class around Couchrest::ExtendedDocument for extending (timestamp hooks, basic views, validation?)
-* Documentation
 * Restrict model to default attributes and their types?
 * Mechanism for better view testing?
 * Gemify
