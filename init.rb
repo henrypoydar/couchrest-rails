@@ -1,2 +1,2 @@
-require 'couchrest_rails'
+require 'couch_rest_rails'
 config.gem 'couchrest'

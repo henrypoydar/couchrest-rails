@@ -1,0 +1,52 @@
+require File.dirname(__FILE__) + '/../spec_helper'
+require 'rails_generator'
+require 'rails_generator/scripts/generate'
+
+describe 'CouchRestRails' do
+  
+  after :all do
+    CouchRest.delete(COUCHDB_SERVER[:instance]) rescue nil
+  end
+  
+  describe 'plugin installation' do
+    
+    before :all do
+      @fake_rails_root = File.join(File.dirname(__FILE__), 'rails_root')
+      FileUtils.mkdir_p(@fake_rails_root)
+      FileUtils.mkdir_p("#{@fake_rails_root}/config/initializers")
+    end
+    
+    after :all do
+      FileUtils.rm_rf(@fake_rails_root)
+    end
+    
+    it "should generate the necessary files in the host application" do
+      Rails::Generator::Scripts::Generate.new.run(
+        ['couchrest_rails', 'relax'], :destination => @fake_rails_root)
+      Dir.glob(File.join(@fake_rails_root, "**", "*.*")).map {|f| File.basename(f)}.should == 
+        ['couchdb.yml', 'couchdb.rb']
+    end
+    
+  end
+  
+  describe '#create' do
+
+    before :each do
+      CouchRest.delete(COUCHDB_SERVER[:instance]) rescue nil
+    end
+    
+    it 'should create a CouchDB database for the current environment' do
+      CouchRestRails.create
+      res = CouchRest.get(COUCHDB_SERVER[:instance])
+      res['db_name'].should == COUCHDB_SERVER[:database]
+    end
+
+    it 'should do nothing and display a message if the database already exists' do
+      CouchRest.database!("#{COUCHDB_SERVER[:instance]}")
+      res = CouchRestRails.create
+      res.should =~ /already exists/i
+    end
+
+  end
+  
+end

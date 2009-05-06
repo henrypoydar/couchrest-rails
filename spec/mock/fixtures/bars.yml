@@ -1,4 +1,4 @@
-<% def blurb; CouchrestRails::Fixtures.random_blurb; end %>
+<% def blurb; CouchRestRails::Fixtures.random_blurb; end %>
 
 <% 5.times do |i| %>
 record_<%= i %>:

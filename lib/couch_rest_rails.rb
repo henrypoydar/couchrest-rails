@@ -1,4 +1,4 @@
-module CouchrestRails
+module CouchRestRails
 
   extend self
   

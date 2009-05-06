@@ -1,4 +1,4 @@
-class CouchrestRailsGenerator < Rails::Generator::NamedBase
+class CouchRestRailsGenerator < Rails::Generator::NamedBase
   def manifest
     record do |m|
       

@@ -1,4 +1,4 @@
-module CouchrestRails
+module CouchRestRails
   module Fixtures
   
     extend self
@@ -23,7 +23,7 @@ module CouchrestRails
       db = CouchRest.database!(COUCHDB_SERVER[:instance])
 
       fixture_files = []
-      Dir.glob(File.join(RAILS_ROOT, CouchrestRails.fixtures_path, "**", "*.yml")).each do |file|
+      Dir.glob(File.join(RAILS_ROOT, CouchRestRails.fixtures_path, "**", "*.yml")).each do |file|
         db.bulk_save(YAML::load(ERB.new(IO.read(file)).result).map {|f| f[1]})
         fixture_files << File.basename(file)
       end

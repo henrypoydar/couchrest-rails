@@ -8,6 +8,7 @@ Specifically, this plugin provides the following utilities:
 * CouchDB-specific rake tasks (database creation, dropping, fixture loading, views synchronization)
 * CouchDB-specific fixtures
 * Setup and teardown helpers for spec'ing and testing
+* A paper-thin wrapper around CouchRest::ExtendedDocument
 
 This plugin currently assumes your application only uses one CouchDB database.  It does not interfere with the traditional relational database backend, so you can use that as a datastore alongside CouchDB if you want.  (In fact, you'll have to unwire the requirement for a relational database if you don't want to use one.)
 
@@ -18,7 +19,7 @@ This plugin currently assumes your application only uses one CouchDB database.  
 * [RSpec-Rails](http://github.com/dchelimsky/rspec-rails) library (optional - for running plugin specs)
 
 
-## Installation and usage
+## Installation
 
 Install with the native Rails plugin installation script:
 
@@ -26,7 +27,7 @@ Install with the native Rails plugin installation script:
 
 Or simply add to vendor/plugins and generate the files you need:
 
-    script/generate couchrest_rails relax
+    script/generate couch_rest_rails relax
     
 The plugin creates two folders:
 
@@ -38,7 +39,9 @@ These paths can be customized in an initializer or environment configuration fil
     CouchrestRails.fixtures_path  = 'custom/path/to/your/fixtures/from/app/root'
     CouchrestRails.views_path     = 'custom/path/to/your/views/from/app/root'
     
-Use the rake tasks to create, drop, reset, sync views and load fixtures:
+## Usage    
+
+Use the rake tasks to create, drop, reset, push views and load fixtures:
 
     rake -T | grep couchdb
     
@@ -56,6 +59,14 @@ Views that you want to push up to the CouchDB database/server instance should be
         
 Push up your views via rake (`rake couchdb:views:push`) or within your code or console (`CouchrestRails::Views.push`).
 
+For models, inherit from CouchRestRails::Document, which hooks up CouchRest::ExtendedDocument to your CouchDB backend:
+
+    class YourCouchDoucment < CouchRestRails::Document
+      ...
+    end
+
+See the CouchRest documentation and specs for more information about CouchRest::ExtendedDocument.
+
 ## Further development and testing
 
 To run the test suite, you'll need rspec installed with rspec-rails library enabled for the host application. You can run the tests in the following way:
@@ -68,8 +79,8 @@ To run the test suite, you'll need rspec installed with rspec-rails library enab
 
 ## TODO
 
-* A persistent connection object?
-* A thin CouchDocument class around Couchrest::ExtendedDocument for extending (timestamp hooks, basic views, validation?)
+* Design docs per model instead of app?
+* A persistent connection object? Keep-alive?
 * Restrict model to default attributes and their types?
 * Mechanism for better view testing?
 * Gemify
