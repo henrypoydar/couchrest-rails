@@ -79,14 +79,14 @@ To run the test suite, you'll need rspec installed with rspec-rails library enab
 
 ## TODO
 
-* Design docs per model instead of app?
+* Shift to design doc per model instead of app
 * A persistent connection object? Keep-alive?
-* Restrict model to default attributes and their types?
+* Hook into Rails logger to display times for CouchDB operations
 * Mechanism for better view testing?
+* Restful model/controller/test generator
 * Gemify
 * Add more parseable options to couchdb.yml
 * Expand beyond a single database per application
-* Currently assumes one design document per application--expand
 
 ## License
 
