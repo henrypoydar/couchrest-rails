@@ -15,6 +15,9 @@ module CouchRestRails
     
     def load
       
+      return "Fixtures directory (#{CouchRestRails.fixtures_path}) does not exist" unless 
+        File.exist?(File.join(RAILS_ROOT, CouchRestRails.fixtures_path))
+      
       res = CouchRest.get(COUCHDB_SERVER[:instance]) rescue nil
       unless (res && res['db_name'] && res['db_name'] == COUCHDB_SERVER[:database])
         return "The CouchDB database '#{COUCHDB_SERVER[:database]}' does not exist"
@@ -29,7 +32,7 @@ module CouchRestRails
       end
 
       if fixture_files.empty?
-        return "No fixtures found in #{fixtures_path}"
+        return "No fixtures found in #{CouchRestRails.fixtures_path}"
       else
         return "Loaded the following fixture files into '#{COUCHDB_SERVER[:database]}': #{fixture_files.join(', ')}"
       end

@@ -14,17 +14,17 @@ describe CouchRestRails::Tests do
   
   describe '#setup' do
     
-    it 'should drop, add and load fixtures for the test database' do
+    it 'should delete, add and load fixtures for the test database' do
       
       # Create a dirty db first...
-      CouchRestRails.create
+      CouchRestRails::Database.create
       db = CouchRest.database(COUCHDB_SERVER[:instance])
       CouchRestRails::Fixtures.load
       db.documents['rows'].size.should == 10
       
       CouchRestRails::Tests.setup
-      db.documents['rows'].size.should == 11 # Includes design doc
-      db.view('application/foos')['rows'].size.should == 5
+      db.documents['rows'].size.should == 12 # Includes design docs
+      db.view('foos/all')['rows'].size.should == 5
     
     end
     
@@ -32,10 +32,10 @@ describe CouchRestRails::Tests do
   
   describe '#teardown' do
     
-    it 'should drop the test database' do
+    it 'should delete the test database' do
       CouchRestRails::Tests.setup
       db = CouchRest.database(COUCHDB_SERVER[:instance])
-      db.documents['rows'].size.should == 11 # Includes design doc
+      db.documents['rows'].size.should == 12 # Includes design docs
       CouchRestRails::Tests.teardown
       lambda {CouchRest.get(COUCHDB_SERVER[:instance])}.should raise_error('Resource not found')
     end

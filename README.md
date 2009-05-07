@@ -5,7 +5,7 @@ A Rails plugin for connecting to and working with a [CouchDB](http://couchdb.apa
 Specifically, this plugin provides the following utilities:
 
 * Initializer for use with a couchdb.yml configuration file
-* CouchDB-specific rake tasks (database creation, dropping, fixture loading, views synchronization)
+* CouchDB-specific rake tasks (database creation, deletion, fixture loading, views synchronization)
 * CouchDB-specific fixtures
 * Setup and teardown helpers for spec'ing and testing
 * A paper-thin wrapper around CouchRest::ExtendedDocument
@@ -32,7 +32,7 @@ Or simply add to vendor/plugins and generate the files you need:
 The plugin creates two folders:
 
 * `db/couch/fixtures` - for storing CouchDB fixtures (yaml)
-* `db/couch/views` - for storing CouchDB map and reduce functions
+* `db/couch/views` - for storing CouchDB map and reduce functions (views)
 
 These paths can be customized in an initializer or environment configuration file:
 
@@ -41,31 +41,42 @@ These paths can be customized in an initializer or environment configuration fil
     
 ## Usage    
 
-Use the rake tasks to create, drop, reset, push views and load fixtures:
+### Rake tasks
+
+Use the rake tasks to create, delete, reset, push views and load fixtures:
 
     rake -T | grep couchdb
+    
+### Tests and specs
     
 For testing or spec'ing, use these helpers to setup and teardown a test database with fixtures:
 
     CouchRestRails::Tests.setup
     CouchRestRails::Tests.teardown
-    
-Views that you want to push up to the CouchDB database/server instance should be in the following format:
 
-    db/couch/views
-    |-- <view_name>
-        |-- map.js
-        `-- reduce.js
-        
-Push up your views via rake (`rake couchdb:views:push`) or within your code or console (`CouchRestRails::Views.push`).
+### CouchDB document models
 
 For models, inherit from CouchRestRails::Document, which hooks up CouchRest::ExtendedDocument to your CouchDB backend:
 
-    class YourCouchDoucment < CouchRestRails::Document
+    class YourCouchDocument < CouchRestRails::Document
       ...
     end
 
 See the CouchRest documentation and specs for more information about CouchRest::ExtendedDocument.
+
+### CouchDB views
+    
+Views that you want to push up to the CouchDB database/server instance should be in the following format:
+
+    db/couch/views
+        |-- <design_document_name>
+            |-- <view_name>
+                |-- map.js
+                `-- reduce.js
+        
+(It's recommended that your design document names line up with your document model names)
+        
+Push up your views via rake (`rake couchdb:views:push`) or within your code or console (`CouchRestRails::Views.push`).
 
 ## Further development and testing
 
@@ -79,11 +90,10 @@ To run the test suite, you'll need rspec installed with rspec-rails library enab
 
 ## TODO
 
-* Shift to design doc per model instead of app
 * A persistent connection object? Keep-alive?
 * Hook into Rails logger to display times for CouchDB operations
 * Mechanism for better view testing?
-* Restful model/controller/test generator
+* Restful model/controller/test/spec generator
 * Gemify
 * Add more parseable options to couchdb.yml
 * Expand beyond a single database per application

@@ -5,15 +5,15 @@ module CouchRestRails
   
     def setup
       ENV['RAILS_ENV'] = CouchRestRails.test_environment
-      CouchRestRails.drop
-      CouchRestRails.create
+      CouchRestRails::Database.delete
+      CouchRestRails::Database.create
       CouchRestRails::Views.push
       CouchRestRails::Fixtures.load
     end
     
     def teardown
       ENV['RAILS_ENV'] = CouchRestRails.test_environment
-      CouchRestRails.drop
+      CouchRestRails::Database.delete
     end
   
   end

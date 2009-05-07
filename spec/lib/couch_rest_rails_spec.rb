@@ -29,24 +29,4 @@ describe 'CouchRestRails' do
     
   end
   
-  describe '#create' do
-
-    before :each do
-      CouchRest.delete(COUCHDB_SERVER[:instance]) rescue nil
-    end
-    
-    it 'should create a CouchDB database for the current environment' do
-      CouchRestRails.create
-      res = CouchRest.get(COUCHDB_SERVER[:instance])
-      res['db_name'].should == COUCHDB_SERVER[:database]
-    end
-
-    it 'should do nothing and display a message if the database already exists' do
-      CouchRest.database!("#{COUCHDB_SERVER[:instance]}")
-      res = CouchRestRails.create
-      res.should =~ /already exists/i
-    end
-
-  end
-  
 end
