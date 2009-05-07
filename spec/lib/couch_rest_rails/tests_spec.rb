@@ -5,6 +5,7 @@ describe CouchRestRails::Tests do
   before :each do
     CouchRest.delete(COUCHDB_SERVER[:instance]) rescue nil
     CouchRestRails.fixtures_path = 'vendor/plugins/couchrest-rails/spec/mock/fixtures'
+    CouchRestRails.views_path = 'vendor/plugins/couchrest-rails/spec/mock/views'
   end
   
   after :all do
@@ -14,12 +15,17 @@ describe CouchRestRails::Tests do
   describe '#setup' do
     
     it 'should drop, add and load fixtures for the test database' do
+      
+      # Create a dirty db first...
       CouchRestRails.create
       db = CouchRest.database(COUCHDB_SERVER[:instance])
       CouchRestRails::Fixtures.load
       db.documents['rows'].size.should == 10
+      
       CouchRestRails::Tests.setup
-      db.documents['rows'].size.should == 10
+      db.documents['rows'].size.should == 11 # Includes design doc
+      db.view('application/foos')['rows'].size.should == 5
+    
     end
     
   end
@@ -29,7 +35,7 @@ describe CouchRestRails::Tests do
     it 'should drop the test database' do
       CouchRestRails::Tests.setup
       db = CouchRest.database(COUCHDB_SERVER[:instance])
-      db.documents['rows'].size.should == 10
+      db.documents['rows'].size.should == 11 # Includes design doc
       CouchRestRails::Tests.teardown
       lambda {CouchRest.get(COUCHDB_SERVER[:instance])}.should raise_error('Resource not found')
     end

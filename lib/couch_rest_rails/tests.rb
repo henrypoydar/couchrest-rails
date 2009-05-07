@@ -7,6 +7,7 @@ module CouchRestRails
       ENV['RAILS_ENV'] = CouchRestRails.test_environment
       CouchRestRails.drop
       CouchRestRails.create
+      CouchRestRails::Views.push
       CouchRestRails::Fixtures.load
     end
     
