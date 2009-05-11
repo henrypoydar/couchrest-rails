@@ -69,7 +69,7 @@ For models, inherit from CouchRestRails::Document, which hooks up CouchRest::Ext
       view_by :email
       
       validates_present :question
-      validates_format :email, :as => :email_addre
+      validates_format :email, :as => :email_address
       
       ...
       
@@ -101,6 +101,7 @@ To run the test suite, you'll need rspec installed with rspec-rails library enab
 
 ## TODO
 
+* Flesh out rspec matchers
 * A persistent connection object? Keep-alive?
 * Hook into Rails logger to display times for CouchDB operations
 * Mechanism for better view testing?
