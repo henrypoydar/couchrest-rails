@@ -54,28 +54,39 @@ For testing or spec'ing, use these helpers to setup and teardown a test database
     CouchRestRails::Tests.setup
     CouchRestRails::Tests.teardown
 
-### CouchDB document models
+### CouchRestRails document model
 
-For models, inherit from CouchRestRails::Document, which hooks up CouchRest::ExtendedDocument to your CouchDB backend:
+For models, inherit from CouchRestRails::Document, which hooks up CouchRest::ExtendedDocument to your CouchDB backend   and includes the CouchRest::Validatation module:
 
     class YourCouchDocument < CouchRestRails::Document
+      
+      property  :email
+      property  :question
+      property  :answer
+
+      timestamps!
+
+      view_by :email
+      
+      validates_present :question
+      validates_format :email, :as => :email_addre
+      
       ...
+      
     end
 
-See the CouchRest documentation and specs for more information about CouchRest::ExtendedDocument.
+See the CouchRest documentation and specs for more information about CouchRest::ExtendedDocument. (The views defined here are in addition to the ones you can manually set up and push via rake in db/couch/views.)
 
 ### CouchDB views
     
-Views that you want to push up to the CouchDB database/server instance should be in the following format:
+Custom views--outside of the ones defined in your CouchRestRails::Document models--that you want to push up to the CouchDB database/server instance should be in the following format:
 
     db/couch/views
         |-- <design_document_name>
             |-- <view_name>
                 |-- map.js
                 `-- reduce.js
-        
-(It's recommended that your design document names line up with your document model names)
-        
+                
 Push up your views via rake (`rake couchdb:views:push`) or within your code or console (`CouchRestRails::Views.push`).
 
 ## Further development and testing
