@@ -15,7 +15,7 @@ describe CouchRestRails::Document do
   end
   
   it "should use the COUCHDB_SERVER constant to define its CouchDB connection" do
-    @doc.database.name.should == COUCHDB_SERVER[:database]
+    @doc.database.name.should == COUCHDB_CONFIG[:database]
   end
 
   

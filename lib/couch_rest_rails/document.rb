@@ -1,8 +1,7 @@
 module CouchRestRails
   class Document < CouchRest::ExtendedDocument
-    use_database CouchRest.database(COUCHDB_SERVER[:instance])
-    
+    use_database COUCHDB_SERVER.default_database
+      
     
   end
 end
-  

@@ -3,23 +3,23 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 describe CouchRestRails::Views do
 
   before :each do
-    CouchRest.delete(COUCHDB_SERVER[:instance]) rescue nil
+    CouchRest.delete(COUCHDB_CONFIG[:full_path]) rescue nil
   end
   
   after :all do
-    CouchRest.delete(COUCHDB_SERVER[:instance]) rescue nil
+    CouchRest.delete(COUCHDB_CONFIG[:full_path]) rescue nil
   end
 
   describe '#create' do
   
     it 'should create a CouchDB database for the current environment' do
       CouchRestRails::Database.create
-      res = CouchRest.get(COUCHDB_SERVER[:instance])
-      res['db_name'].should == COUCHDB_SERVER[:database]
+      res = CouchRest.get(COUCHDB_CONFIG[:full_path])
+      res['db_name'].should == COUCHDB_CONFIG[:database]
     end
 
     it 'should do nothing and display a message if the database already exists' do
-      CouchRest.database!("#{COUCHDB_SERVER[:instance]}")
+      CouchRest.database!("#{COUCHDB_CONFIG[:full_path]}")
       res = CouchRestRails::Database.create
       res.should =~ /already exists/i
     end
@@ -29,9 +29,9 @@ describe CouchRestRails::Views do
   describe "#delete" do
     
     it 'should delete the CouchDB database for the current environment' do
-      CouchRest.database!("#{COUCHDB_SERVER[:instance]}")
+      CouchRest.database!("#{COUCHDB_CONFIG[:full_path]}")
       CouchRestRails::Database.delete
-      lambda {CouchRest.get(COUCHDB_SERVER[:instance])}.should raise_error('Resource not found')
+      lambda {CouchRest.get(COUCHDB_CONFIG[:full_path])}.should raise_error('Resource not found')
     end
 
     it 'should do nothing and display a message if the database does not exist' do

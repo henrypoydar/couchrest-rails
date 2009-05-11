@@ -26,10 +26,13 @@ rescue
  
 else
   
-  COUCHDB_SERVER = {
-    :uri => "#{protocol}://#{authorized_host}:#{port}", 
+  COUCHDB_CONFIG = {
+    :host_path => "#{protocol}://#{authorized_host}:#{port}", 
     :database => database, 
-    :instance => "#{protocol}://#{authorized_host}:#{port}/#{database}"
+    :full_path => "#{protocol}://#{authorized_host}:#{port}/#{database}"
   }
+  
+  COUCHDB_SERVER = CouchRest.new COUCHDB_CONFIG[:host_path]
+  COUCHDB_SERVER.default_database = COUCHDB_CONFIG[:database]
 
 end

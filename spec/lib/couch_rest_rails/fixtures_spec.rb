@@ -17,11 +17,11 @@ describe CouchRestRails::Fixtures do
   describe '#load' do
   
     before :each do
-      CouchRest.delete(COUCHDB_SERVER[:instance]) rescue nil
+      CouchRest.delete(COUCHDB_CONFIG[:full_path]) rescue nil
     end
     
     after :all do
-      CouchRest.delete(COUCHDB_SERVER[:instance]) rescue nil
+      CouchRest.delete(COUCHDB_CONFIG[:full_path]) rescue nil
     end
   
     it "should exit if the database doesn't exist" do
@@ -30,7 +30,7 @@ describe CouchRestRails::Fixtures do
     end
 
     it "should load up the yaml files in CouchRestRails.fixtures_path as documents" do
-      db = CouchRest.database!(COUCHDB_SERVER[:instance])
+      db = CouchRest.database!(COUCHDB_CONFIG[:full_path])
       CouchRestRails.fixtures_path = 'vendor/plugins/couchrest-rails/spec/mock/fixtures'
       CouchRestRails::Fixtures.load
       db.documents['rows'].size.should == 10

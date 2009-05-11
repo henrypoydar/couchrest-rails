@@ -8,11 +8,11 @@ module CouchRestRails
       return "Views directory (#{CouchRestRails.views_path}) does not exist" unless 
         File.exist?(File.join(RAILS_ROOT, CouchRestRails.views_path))
         
-      res = CouchRest.get(COUCHDB_SERVER[:instance]) rescue nil
-      if res && res['db_name'] && res['db_name'] == COUCHDB_SERVER[:database]        
+      res = CouchRest.get(COUCHDB_CONFIG[:full_path]) rescue nil
+      if res && res['db_name'] && res['db_name'] == COUCHDB_CONFIG[:database]        
         
         result = []
-        db = CouchRest.database(COUCHDB_SERVER[:instance])
+        db = CouchRest.database(COUCHDB_CONFIG[:full_path])
         
         Dir.glob(File.join(RAILS_ROOT, CouchRestRails.views_path, '*')).each do |design_doc|
           design_doc_name = File.basename(design_doc)
@@ -31,7 +31,7 @@ module CouchRestRails
         return "No views were found in #{CouchRestRails.views_path}" if result.empty?
         
       else
-        return "CouchDB database '#{COUCHDB_SERVER[:database]}' doesn't exist"
+        return "CouchDB database '#{COUCHDB_CONFIG[:database]}' doesn't exist"
       end
       
       result.join("\n")

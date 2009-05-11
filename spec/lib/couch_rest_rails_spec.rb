@@ -5,7 +5,7 @@ require 'rails_generator/scripts/generate'
 describe 'CouchRestRails' do
   
   after :all do
-    CouchRest.delete(COUCHDB_SERVER[:instance]) rescue nil
+    CouchRest.delete(COUCHDB_CONFIG[:full_path]) rescue nil
   end
   
   describe 'plugin installation' do
