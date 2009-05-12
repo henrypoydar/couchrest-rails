@@ -7,17 +7,37 @@ describe Spec::Rails::Matchers do
     before :all do
       class CouchFoo < CouchRestRails::Document  
         
-        property  :question
-        property  :answer
+        property  :something_present
+        property  :something_long
+        property  :something_formatted
+        property  :something_numeric
         
-        validates_present :question
-      
+        validates_presence_of     :something_present
+        validates_length_of       :something_long, :minimum => 10, :maximum => 50
+        validates_format_of       :something_formatted, :with => /[A-Z]{3}-[0-9]{3}/
+        validates_numericality_of :something_numeric
+
       end
       @couch_foo = CouchFoo.new
     end
     
-    it "should have a matcher for validates_present" do
-      @couch_foo.should validate_present(:question)
+    # Use lengthy matcher names so as not to interfere with 
+    # rspec-on-rails-matchers plugin if present
+    
+    it "should have a matcher for validates_presence_of" do
+      @couch_foo.should validate_couchdb_document_presence_of(:something_present)
+    end
+    
+    it "should have a matcher for validates_numericality_of" do
+      @couch_foo.should validate_couchdb_document_numericality_of(:something_numeric)
+    end
+    
+    it "should have a matcher for validates_format_of" do
+      @couch_foo.should validate_couchdb_document_format_of(:something_formatted, :with => /[A-Z]{3}-[0-9]{3}/)
+    end
+    
+    it "should have a matcher for validates_length_of" do
+      @couch_foo.should validate_couchdb_document_length_of(:something_long, :minimum => 10, :maximum => 50)
     end
     
   end

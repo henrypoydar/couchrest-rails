@@ -53,23 +53,26 @@ For testing or spec'ing, use these helpers to setup and teardown a test database
 
     CouchRestRails::Tests.setup
     CouchRestRails::Tests.teardown
+    
+There are also some simple matchers you can can use to spec validations.  See `spec/lib/matchers`.
 
 ### CouchRestRails document model
 
-For models, inherit from CouchRestRails::Document, which hooks up CouchRest::ExtendedDocument to your CouchDB backend   and includes the CouchRest::Validatation module:
+For models, inherit from CouchRestRails::Document, which hooks up CouchRest::ExtendedDocument to your CouchDB backend   and includes the [Validatable](http://validatable.rubyforge.org/) module:
 
     class YourCouchDocument < CouchRestRails::Document
       
       property  :email
       property  :question
       property  :answer
+      property  :rating
 
       timestamps!
 
       view_by :email
       
-      validates_present :question
-      validates_format :email, :as => :email_address
+      validates_presence_of :question
+      validates_numericality_of :rating
       
       ...
       
@@ -101,7 +104,6 @@ To run the test suite, you'll need rspec installed with rspec-rails library enab
 
 ## TODO
 
-* Flesh out rspec matchers
 * A persistent connection object? Keep-alive?
 * Hook into Rails logger to display times for CouchDB operations
 * Mechanism for better view testing?

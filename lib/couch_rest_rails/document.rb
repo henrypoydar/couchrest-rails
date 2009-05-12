@@ -1,7 +1,7 @@
 module CouchRestRails
   class Document < CouchRest::ExtendedDocument
     use_database COUCHDB_SERVER.default_database
-    include CouchRest::Validation
+    include Validatable
     
   end
 end
