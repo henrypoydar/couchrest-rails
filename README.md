@@ -104,7 +104,7 @@ To run the test suite, you'll need rspec installed with rspec-rails library enab
 
 ## TODO
 
-* Roll up CouchRest::ExtendedDocument, since it's been deprecated from CouchRest
+* Roll up CouchRest::ExtendedDocument, since it might be deprecated from CouchRest (see CouchRest raw branch)
 * A persistent connection object? Keep-alive?
 * Hook into Rails logger to display times for CouchDB operations
 * Mechanism for better view testing?
