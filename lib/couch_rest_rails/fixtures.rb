@@ -1,8 +1,8 @@
 module CouchRestRails
   module Fixtures
-  
+
     extend self
-  
+
     def blurbs
       res = []
       res << "Cras dictum. Maecenas ut turpis. In vitae erat ac orci dignissim eleifend. Nunc quis justo. Sed vel ipsum in purus tincidunt pharetra. Sed pulvinar, felis id consectetuer malesuada, enim nisl mattis elit, a facilisis tortor nibh quis leo. Sed augue lacus, pretium vitae, molestie eget, rhoncus quis, elit. Donec in augue. Fusce orci wisi, ornare id, mollis vel, lacinia vel, massa. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas."
@@ -12,16 +12,16 @@ module CouchRestRails
       res << "Morbi non erat non ipsum pharetra tempus. Donec orci. Proin in ante. Pellentesque sit amet purus. Cras egestas diam sed ante. Etiam imperdiet urna sit amet risus. Donec ornare arcu id erat. Aliquam ultrices scelerisque sem. In elit nulla, molestie vel, ornare sit amet, interdum vel, mauris. Etiam dignissim imperdiet metus."
       res << "Donec placerat. Nullam nibh dolor, blandit sed, fermentum id, imperdiet sit amet, neque. Nam mollis ultrices justo. Sed tempor. Sed vitae tellus. Etiam sem arcu, eleifend sit amet, gravida eget, porta at, wisi. Nam non lacus vitae ipsum viverra pretium. Phasellus massa. Fusce magna sem, gravida in, feugiat ac, molestie eget, wisi. Fusce consectetuer luctus ipsum. Vestibulum nunc. Suspendisse dignissim adipiscing libero. Integer leo. Sed pharetra ligula a dui. Quisque ipsum nibh, ullamcorper eget, pulvinar sed, posuere vitae, nulla. Sed varius nibh ut lacus. Curabitur fringilla. Nunc est ipsum, pretium quis, dapibus sed, varius non, lectus. Proin a quam. Praesent lacinia, eros quis aliquam porttitor, urna lacus volutpat urna, ut fermentum neque mi egestas dolor."
     end
-    
+
     def load
-      
-      return "Fixtures directory (#{CouchRestRails.fixtures_path}) does not exist" unless 
+
+      return "Fixtures directory (#{CouchRestRails.fixtures_path}) does not exist" unless
         File.exist?(File.join(RAILS_ROOT, CouchRestRails.fixtures_path))
-      
+
       res = CouchRest.get(COUCHDB_CONFIG[:full_path]) rescue nil
       unless (res && res['db_name'] && res['db_name'] == COUCHDB_CONFIG[:database])
         return "The CouchDB database '#{COUCHDB_CONFIG[:database]}' does not exist"
-      end      
+      end
 
       db = CouchRest.database!(COUCHDB_CONFIG[:full_path])
 
@@ -36,12 +36,12 @@ module CouchRestRails
       else
         return "Loaded the following fixture files into '#{COUCHDB_CONFIG[:database]}': #{fixture_files.join(', ')}"
       end
-    
+
     end
-  
+
     def random_blurb
       blurbs.sort_by {rand}.first
     end
-  
+
   end
 end
