@@ -51,7 +51,7 @@ module CouchRestRails
       views = {}
       view = {}
       view[:map] = IO.read(File.join(view_folder, 'map.js')) if File.exist?(File.join(view_folder, 'map.js'))
-      view[:reduce] = IO.read(File.join(view_folder, 'reduce.js')) if File.exist?(File.join(view_folder, 'reduce.js'))
+      view[:reduce] = IO.read(File.join(view_folder, 'reduce.js')) if File.exist?(File.join(view_folder, 'reduce.js')) && File.size(File.join(view_folder, 'reduce.js')) > 0
       views[File.basename(view_folder).to_sym] = view if view[:map]
 
       views
