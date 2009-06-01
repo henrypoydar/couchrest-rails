@@ -22,11 +22,10 @@ module CouchRestRails
             db_con = CouchRest.database("#{COUCHDB_CONFIG[:host_path]}/#{db_name}")
 
             Dir.glob(File.join(db,"views", view)).each do |design_doc|
-
               design_doc_name = File.basename(design_doc)
               views = assemble_views(design_doc)
               if views.empty?
-                result << "No views were found in #{CouchRestRails.views_path}/#{File.basename(design_doc)}"
+                result << "No views were found in #{design_doc}/#{File.basename(design_doc)}"
               else
                 db_con.save_doc({
                                   "_id" => "_design/#{design_doc_name}",
@@ -48,14 +47,13 @@ module CouchRestRails
       end
     end
 
-   def assemble_views(design_doc_path)
+    def assemble_views(view_folder)
       views = {}
-      Dir.glob(File.join(design_doc_path, '*')).each do |view_folder|
-        view = {}
-        view[:map] = IO.read(File.join(view_folder, 'map.js')) if File.exist?(File.join(view_folder, 'map.js'))
-        view[:reduce] = IO.read(File.join(view_folder, 'reduce.js')) if File.exist?(File.join(view_folder, 'reduce.js'))
-        views[File.basename(view_folder).to_sym] = view if view[:map]
-      end
+      view = {}
+      view[:map] = IO.read(File.join(view_folder, 'map.js')) if File.exist?(File.join(view_folder, 'map.js'))
+      view[:reduce] = IO.read(File.join(view_folder, 'reduce.js')) if File.exist?(File.join(view_folder, 'reduce.js'))
+      views[File.basename(view_folder).to_sym] = view if view[:map]
+
       views
     end
   end
