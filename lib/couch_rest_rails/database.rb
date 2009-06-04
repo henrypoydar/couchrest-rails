@@ -10,7 +10,7 @@ module CouchRestRails
       Dir[File.join(RAILS_ROOT, CouchRestRails.setup_path,'*')].each do |db|
         # check for a directory...
         if File::directory?( db )
-          database_name =COUCHDB_CONFIG[:db_prefix] +  File.basename( db) +
+          database_name =COUCHDB_CONFIG[:db_prefix] +  File.basename(db) +
             COUCHDB_CONFIG[:db_suffix]
           if existing_databases.include?(database_name)
             puts "The CouchDB database '#{database_name}' already exists"
@@ -18,6 +18,8 @@ module CouchRestRails
             # create the database
             COUCHDB_SERVER.create_db(database_name)
             puts "Created the CouchDB database '#{database_name}'"
+            # create views on database
+            puts CouchRestRails::Views.push(File.basename(db),"*")
           end
         end
       end
@@ -31,7 +33,7 @@ module CouchRestRails
       Dir[File.join(RAILS_ROOT, CouchRestRails.setup_path,"*")].each do |db|
         # check for a directory...
         if File::directory?( db )
-          database_name =COUCHDB_CONFIG[:db_prefix] +  File.basename( db) +
+          database_name =COUCHDB_CONFIG[:db_prefix] +  File.basename(db) +
             COUCHDB_CONFIG[:db_suffix]
           if existing_databases.include?(database_name)
             CouchRest.delete "#{COUCHDB_CONFIG[:host_path]}/#{database_name}"

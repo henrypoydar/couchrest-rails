@@ -7,20 +7,18 @@ module CouchRestRails
 
       puts "database = #{database} :: view=#{view}"
 
-      return "Database '#{database}' doesn't exists" unless (database == "*" ||
+      return  "Database '#{database}' doesn't exists" unless (database == "*" ||
                                                              File.exist?(File.join(RAILS_ROOT, CouchRestRails.setup_path, database)))
-
       Dir[File.join(RAILS_ROOT, CouchRestRails.setup_path, database)].each do |db|
         result = []
         # check for a directory...
-        if File::directory?( db )
+        if File::directory?(db)
           return "Views directory (#{db}/views) does not exist" unless File.exist?("#{db}/views")
           db_name =COUCHDB_CONFIG[:db_prefix] +  File.basename( db) +
             COUCHDB_CONFIG[:db_suffix]
           res = CouchRest.get("#{COUCHDB_CONFIG[:host_path]}/#{db_name}") rescue nil
           if res
             db_con = CouchRest.database("#{COUCHDB_CONFIG[:host_path]}/#{db_name}")
-
             Dir.glob(File.join(db,"views", view)).each do |design_doc|
               design_doc_name = File.basename(design_doc)
               views = assemble_views(design_doc)

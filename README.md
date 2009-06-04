@@ -29,7 +29,7 @@ Or simply add to vendor/plugins and generate the files you need:
 
     script/generate couch_rest_rails relax
     
-The plugin creates two folders:
+The plugin creates one folder:
 
 * `db/couch/fixtures` - for storing CouchDB fixtures (yaml)
 * `db/couch/views` - for storing CouchDB map and reduce functions (views)
@@ -61,7 +61,8 @@ There are also some simple matchers you can can use to spec validations.  See `s
 For models, inherit from CouchRestRails::Document, which hooks up CouchRest::ExtendedDocument to your CouchDB backend   and includes the [Validatable](http://validatable.rubyforge.org/) module:
 
     class YourCouchDocument < CouchRestRails::Document
-      
+      use_database 'database_name'
+
       property  :email
       property  :question
       property  :answer
@@ -84,11 +85,11 @@ See the CouchRest documentation and specs for more information about CouchRest::
     
 Custom views--outside of the ones defined in your CouchRestRails::Document models--that you want to push up to the CouchDB database/server instance should be in the following format:
 
-    db/couch/views
-        |-- <design_document_name>
-            |-- <view_name>
-                |-- map.js
-                `-- reduce.js
+    db/couch/<database_name>/views
+            |-- <design_document_name>
+                |-- <view_name>
+                    |-- map.js
+                    `-- reduce.js
                 
 Push up your views via rake (`rake couchdb:views:push`) or within your code or console (`CouchRestRails::Views.push`).
 
