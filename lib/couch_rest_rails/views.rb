@@ -8,7 +8,7 @@ module CouchRestRails
       puts "database = #{database} :: view=#{view}"
 
       return  "Database '#{database}' doesn't exists" unless (database == "*" ||
-                                                             File.exist?(File.join(RAILS_ROOT, CouchRestRails.setup_path, database)))
+                                                              File.exist?(File.join(RAILS_ROOT, CouchRestRails.setup_path, database)))
       Dir[File.join(RAILS_ROOT, CouchRestRails.setup_path, database)].each do |db|
         result = []
         # check for a directory...
@@ -54,12 +54,6 @@ module CouchRestRails
         view[:reduce] = IO.read(File.join(view_folder, 'reduce.js')) if File.exist?(File.join(view_folder, 'reduce.js')) && File.size(File.join(view_folder, 'reduce.js')) > 0
         views[File.basename(view_folder).to_sym] = view if view[:map]
       end
-      
-#       view = {}
-#       view[:map] = IO.read(File.join(view_folder, 'map.js')) if File.exist?(File.join(view_folder, 'map.js'))
-#       view[:reduce] = IO.read(File.join(view_folder, 'reduce.js')) if File.exist?(File.join(view_folder, 'reduce.js')) && File.size(File.join(view_folder, 'reduce.js')) > 0
-#       views[File.basename(view_folder).to_sym] = view if view[:map]
-
       views
     end
   end
