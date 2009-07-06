@@ -23,16 +23,29 @@ namespace :couchdb do
 
   namespace :fixtures do
     desc "Load fixtures into the current environment's CouchDB database"
-    task :load => :environment do
-      puts CouchRestRails::Fixtures.load
+    task :load, :database, :needs  => :environment do |t, args|
+      args.with_defaults(:database => "*")
+      puts CouchRestRails::Fixtures.load(args.database)
+    end
+    task :dump, :database, :needs => :environment do |t, args|
+      args.with_defaults(:database => "*")
+      puts CouchRestRails::Fixtures.dump(args.database)
     end
   end
 
   namespace :views do
     desc "Push views into the current environment's CouchDB database"
-    task :push, :database, :view, :needs => :environment do |t, args|
-      args.with_defaults(:database => "*", :view => "*")
-      puts CouchRestRails::Views.push(args.database, args.view)
+    task :push, :database, :design_doc, :needs => :environment do |t, args|
+      args.with_defaults(:database => "*", :design_doc => "*")
+      puts CouchRestRails::Views.push(args.database, args.design_doc)
+    end
+  end
+
+  namespace :lucene do
+    desc "Push views into the current environment's CouchDB database"
+    task :push, :database, :design_doc, :needs => :environment do |t, args|
+      args.with_defaults(:database => "*", :design_doc => "*")
+      puts CouchRestRails::Lucene.push(args.database, args.design_doc)
     end
   end
 

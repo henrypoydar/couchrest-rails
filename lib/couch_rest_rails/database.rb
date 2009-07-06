@@ -20,6 +20,8 @@ module CouchRestRails
             puts "Created the CouchDB database '#{database_name}'"
             # create views on database
             puts CouchRestRails::Views.push(File.basename(db),"*")
+            # create lucene-searches
+            puts CouchRestRails::Lucene.push(File.basename(db),"*")
           end
         end
       end

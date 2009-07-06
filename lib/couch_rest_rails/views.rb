@@ -3,9 +3,9 @@ module CouchRestRails
 
     extend self
 
-    def push(database, view)
+    def push(database, design_doc)
 
-      puts "database = #{database} :: view=#{view}"
+      puts "database = #{database} :: design_doc=#{design_doc}"
 
       return  "Database '#{database}' doesn't exists" unless (database == "*" ||
                                                               File.exist?(File.join(RAILS_ROOT, CouchRestRails.setup_path, database)))
@@ -19,21 +19,21 @@ module CouchRestRails
           res = CouchRest.get("#{COUCHDB_CONFIG[:host_path]}/#{db_name}") rescue nil
           if res
             db_con = CouchRest.database("#{COUCHDB_CONFIG[:host_path]}/#{db_name}")
-            Dir.glob(File.join(db,"views", view)).each do |design_doc|
-              design_doc_name = File.basename(design_doc)
-              views = assemble_views(design_doc)
+            Dir.glob(File.join(db,"views", design_doc)).each do |doc|
+              design_doc_name = File.basename(doc)
+              views = assemble_views(doc)
               if views.empty?
-                result << "No views were found in #{design_doc}/#{File.basename(design_doc)}"
+                result << "No views were found in #{doc}/#{File.basename(doc)}"
               else
                 db_con.save_doc({
                                   "_id" => "_design/#{design_doc_name}",
                                   :views => views
                                 })
-                result << "Added views the following views to _design/#{design_doc_name}: #{views.map {|k,v| k.to_s}.join(', ')}"
+                result << "Added views the following design_doc to _design/#{design_doc_name}: #{views.map {|k,v| k.to_s}.join(', ')}"
               end
             end
 
-            puts "No views were found in '#{File.join(db,"views", view)}'" if result.empty?
+            puts "No views were found in '#{File.join(db,"views", design_doc)}'" if result.empty?
           else
             return  "CouchDB database '#{db_name}' doesn't exist. create it first"
           end

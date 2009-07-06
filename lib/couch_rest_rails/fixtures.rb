@@ -13,32 +13,56 @@ module CouchRestRails
       res << "Donec placerat. Nullam nibh dolor, blandit sed, fermentum id, imperdiet sit amet, neque. Nam mollis ultrices justo. Sed tempor. Sed vitae tellus. Etiam sem arcu, eleifend sit amet, gravida eget, porta at, wisi. Nam non lacus vitae ipsum viverra pretium. Phasellus massa. Fusce magna sem, gravida in, feugiat ac, molestie eget, wisi. Fusce consectetuer luctus ipsum. Vestibulum nunc. Suspendisse dignissim adipiscing libero. Integer leo. Sed pharetra ligula a dui. Quisque ipsum nibh, ullamcorper eget, pulvinar sed, posuere vitae, nulla. Sed varius nibh ut lacus. Curabitur fringilla. Nunc est ipsum, pretium quis, dapibus sed, varius non, lectus. Proin a quam. Praesent lacinia, eros quis aliquam porttitor, urna lacus volutpat urna, ut fermentum neque mi egestas dolor."
     end
 
-    def load
-
-      return "Fixtures directory (#{CouchRestRails.fixtures_path}) does not exist" unless
-        File.exist?(File.join(RAILS_ROOT, CouchRestRails.fixtures_path))
-
-      res = CouchRest.get(COUCHDB_CONFIG[:full_path]) rescue nil
-      unless (res && res['db_name'] && res['db_name'] == COUCHDB_CONFIG[:database])
-        return "The CouchDB database '#{COUCHDB_CONFIG[:database]}' does not exist"
-      end
-
-      db = CouchRest.database!(COUCHDB_CONFIG[:full_path])
-
+    def load(database)
+      puts "database = #{database}"
       fixture_files = []
-      Dir.glob(File.join(RAILS_ROOT, CouchRestRails.fixtures_path, "**", "*.yml")).each do |file|
-        db.bulk_save(YAML::load(ERB.new(IO.read(file)).result).map {|f| f[1]})
-        fixture_files << File.basename(file)
+      return  "Database '#{database}' doesn't exists" unless (database == "*" ||
+                                                              File.exist?(File.join(RAILS_ROOT, CouchRestRails.setup_path, database)))
+      Dir[File.join(RAILS_ROOT, CouchRestRails.setup_path, database)].each do |db|
+        db_name =COUCHDB_CONFIG[:db_prefix] +  File.basename( db) +
+          COUCHDB_CONFIG[:db_suffix]
+        res = CouchRest.get("#{COUCHDB_CONFIG[:host_path]}/#{db_name}") rescue nil
+        if res
+          db_con = CouchRest.database("#{COUCHDB_CONFIG[:host_path]}/#{db_name}")
+          Dir.glob(File.join(RAILS_ROOT, CouchRestRails.fixture_path, "#{database}.yml")).each do |file|
+            db_con.bulk_save(YAML::load(ERB.new(IO.read(file)).result).map {|f| f[1]})
+            fixture_files << File.basename(file)
+          end
+        end
+        if fixture_files.empty?
+          return "No fixtures found in #{CouchRestRails.fixture_path}"
+        else
+          return "Loaded the following fixture files into '#{db}': #{fixture_files.join(', ')}"
+        end
       end
-
-      if fixture_files.empty?
-        return "No fixtures found in #{CouchRestRails.fixtures_path}"
-      else
-        return "Loaded the following fixture files into '#{COUCHDB_CONFIG[:database]}': #{fixture_files.join(', ')}"
-      end
-
     end
 
+    def dump(database)
+      puts "database = #{database}"
+      return  "Database '#{database}' doesn't exists" unless (database == "*" ||
+                                                              File.exist?(File.join(RAILS_ROOT, CouchRestRails.setup_path, database)))
+      Dir[File.join(RAILS_ROOT, CouchRestRails.setup_path, database)].each do |db|
+        db_name =COUCHDB_CONFIG[:db_prefix] +  File.basename( db) +
+          COUCHDB_CONFIG[:db_suffix]
+        res = CouchRest.get("#{COUCHDB_CONFIG[:host_path]}/#{db_name}") rescue nil
+        if res
+          i = "000"
+          File.open(File.join(RAILS_ROOT, CouchRestRails.fixture_path, "#{database}.yml"), 'w' ) do |file|
+            yaml_hash = {}
+            db_con = CouchRest.database("#{COUCHDB_CONFIG[:host_path]}/#{db_name}")
+            docs = db_con.documents(:include_docs =>true )
+            docs["rows"].each { |data|
+              doc = data["doc"]
+              unless  (doc['_id'] =~ /^_design*/) == 0
+                doc.delete('_rev')
+                yaml_hash["#{database}_#{i.succ!}"] = doc
+              end
+            }
+            file.write yaml_hash.to_yaml
+          end
+        end
+      end
+    end
     def random_blurb
       blurbs.sort_by {rand}.first
     end
