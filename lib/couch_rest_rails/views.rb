@@ -25,30 +25,33 @@ module CouchRestRails
         Dir.glob(File.join(db, "views", design_doc)).each do |doc|
           design_doc_name = File.basename(doc)
 
-          # Load views from filesystem & couchdb
+          # Load views from filesystem & CouchDB
           views = assemble_views(doc)
           couchdb_design = db_con.get("_design/#{design_doc_name}") rescue nil
 
-          # Update couchdb's freshly-fetched views...
+          # Update CouchDB's freshly-fetched views, but don't destroy
+          # any view not referenced on the FS. Not sure about that part:
+          # should we synchronize aggressively?
           views = couchdb_design['views'].merge(views) unless couchdb_design.nil?
 
           if views.empty?
             result << "No updatable views in #{doc}/#{File.basename(doc)}"
           else
-            rev = couchdb_design.nil? ? {} : { '_rev' => couchdb_design['_rev'] }
-            id  = "_design/#{design_doc_name}"
-            db_con.save_doc({
-                              '_id'      => id,
-                              'language' => 'javascript',
-                              'views'    => views
-                            }.merge(rev))
-            result << "Added views to #{id}: #{views.keys.join(', ')}"
+
+            # Create or update the design, then set its views
+            if couchdb_design.nil?
+              couchdb_design = { '_id'      => "_design/#{design_doc_name}",
+                                 'language' => 'javascript' }
+            end
+            couchdb_design['views'] = views
+
+            db_con.save_doc(couchdb_design)
+            result << "Added views to #{design_doc_name}: #{views.keys.join(', ')}"
           end
         end
-
-        return "No views were found in '#{File.join(db, "views", design_doc)}'" if result.empty?
-        return "#{result.join("\n")}"
+        result << "No views were found in '#{File.join(db, "views", design_doc)}'" if result.empty?
       end
+      result.join("\n")
     end
 
     # Assemble views from file-system path design_doc_path
