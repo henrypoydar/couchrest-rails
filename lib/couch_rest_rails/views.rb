@@ -1,37 +1,35 @@
 module CouchRestRails
   module Views
-
     extend self
 
-    def push(database, view)
-
-      puts "database = #{database} :: view = #{view}"
+    # Push views to couchdb
+    def push(database, design_doc)
+      puts "database = #{database} :: design_doc = #{design_doc}"
       return  "Database '#{database}' doesn't exists" unless (database == "*" || File.exist?(File.join(RAILS_ROOT, CouchRestRails.setup_path, database)))
+
       Dir[File.join(RAILS_ROOT, CouchRestRails.setup_path, database)].each do |db|
         result = []
 
-        # check for a directory...
-        if File::directory?(db)
+        # Check for a directory...
+        if File.directory?(db)
           return "Views directory (#{db}/views) does not exist" unless File.exist?("#{db}/views")
-          db_name = COUCHDB_CONFIG[:db_prefix] +  File.basename( db) + COUCHDB_CONFIG[:db_suffix]
+          db_name = COUCHDB_CONFIG[:db_prefix] +  File.basename(db) + COUCHDB_CONFIG[:db_suffix]
           res = CouchRest.get("#{COUCHDB_CONFIG[:host_path]}/#{db_name}") rescue nil
 
           if res
             db_con = CouchRest.database("#{COUCHDB_CONFIG[:host_path]}/#{db_name}")
-            Dir.glob(File.join(db,"views", view)).each do |design_doc|
-              design_doc_name = File.basename(design_doc)
+            Dir.glob(File.join(db, "views", design_doc)).each do |doc|
+              design_doc_name = File.basename(doc)
 
-              # Load views from filesystem
-              views = assemble_views(design_doc)
-
-              # Load views from couchdb
+              # Load views from filesystem & from couchdb
+              views = assemble_views(doc)
               couchdb_design = db_con.get("_design/#{design_doc_name}")
 
-              # Merge views: update couchdb existing views
+              # Update views from couchdb existing views
               views = couchdb_design['views'].merge(views)
 
               if views.empty?
-                result << "No updatable views in #{design_doc}/#{File.basename(design_doc)}"
+                result << "No updatable views in #{doc}/#{File.basename(doc)}"
               else
                 db_con.save_doc({
                                   '_id' => "_design/#{design_doc_name}",
@@ -42,14 +40,14 @@ module CouchRestRails
                 result << "Added views to _design/#{design_doc_name}: #{views.map {|k,v| k }.join(', ')}"
               end
             end
-            puts "No views were found in '#{File.join(db,"views", view)}'" if result.empty?
+            puts "No views were found in '#{File.join(db, "views", design_doc)}'" if result.empty?
           else
             return  "CouchDB database '#{db_name}' doesn't exist! Create it first."
           end
         else
           return "CouchDB database '#{database}' doesn't exist"
         end
-        puts "#{result.join("\n")}"
+        return "#{result.join("\n")}"
       end
     end
 
