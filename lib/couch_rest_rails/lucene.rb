@@ -1,3 +1,5 @@
+require 'json'
+
 module CouchRestRails
   module Lucene
     extend self
@@ -21,20 +23,27 @@ module CouchRestRails
           return "CouchDB database '#{db_name}' does not exist. Create it first. (#{err})"
         end
 
-        # Load lucene views from FS
-        doc_path = File.join(db, 'lucene')
-        index_views = assemble_lucene(doc_path)
-
         # Update CouchDB designs
         db_con = CouchRest.database("#{COUCHDB_CONFIG[:host_path]}/#{db_name}")
-        if index_views.blank?
-          result << "No search was found in #{doc_path}/#{File.basename(doc_path)}"
-        else
-          design_id = "_design/#{File.basename(doc_path)}"
-          db_con.save_doc({ "_id" => design_id,
-                            :fulltext => index_views
-                          })
-          result << "Added lucene-search the following design_doc to #{design_id}: #{index_views.keys.join(', ')}"
+        Dir.glob(File.join(db, 'lucene', design_doc)).each do |doc|
+          design_doc_name = File.basename(doc)
+
+          # Load lucene definition views from FS
+          index_views = assemble_lucene(doc)
+          couchdb_design = db_con.get("_design/#{design_doc_name}") rescue nil
+
+          # Update CouchDB's design with fulltext definition files
+          if index_views.blank?
+            result << "No search was found in #{doc}/#{design_doc_name}"
+          else
+            # Create the design doc, and/or update fulltext property
+            couchdb_design = { '_id' => "_design/#{design_doc_name}" } if couchdb_design.nil?
+            couchdb_design['fulltext'] = index_views
+
+            db_con.save_doc(couchdb_design)
+            result << "Added lucene fulltext views to #{design_doc_name}: #{index_views.keys.join(', ')}"
+          end
+
         end
       end
       result.join("\n")
@@ -43,10 +52,9 @@ module CouchRestRails
     # Assemble views from file-system path lucene_doc_path
     def assemble_lucene(lucene_doc_path)
       search = {}
-      if File.exist?(File.join(lucene_doc_path, 'lucene.js'))
-        lucene = {'defaults' => { 'store' => 'no', 'index' => 'not_analyzed' } }
-        lucene['index'] = IO.read(File.join(lucene_doc_path, 'lucene.js')).gsub(/\n/, '')
-        search['message_search'] = lucene
+      Dir.glob(File.join(lucene_doc_path, '*')).each do |search_file|
+        search_name = File.basename(search_file).sub(/\.js$/, '')
+        search[search_name] = JSON.parse IO.read(search_file)
       end
       search
     end
