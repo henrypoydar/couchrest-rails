@@ -1,13 +1,15 @@
 namespace :couchdb do
 
   desc "Create the CouchDB database defined in config/couchdb.yml for the current environment"
-  task :create => :environment do
-    puts CouchRestRails::Database.create
+  task :create, :database, :needs => :environment do |t, args|
+      args.with_defaults(:database => "*")
+      puts CouchRestRails::Database.create(args.database)
   end
 
   desc "Deletes the CouchDB database for the current RAILS_ENV"
-  task :delete => :environment do
-    puts CouchRestRails::Database.delete
+  task :delete, :database, :needs => :environment do |t, args|
+      args.with_defaults(:database => "*")
+      puts CouchRestRails::Database.delete(args.database)
   end
 
   desc "Deletes and recreates the CouchDB database for the current RAILS_ENV"
