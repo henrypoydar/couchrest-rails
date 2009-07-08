@@ -23,20 +23,20 @@ module CouchRestRails
 
               # Load views from filesystem & from couchdb
               views = assemble_views(doc)
-              couchdb_design = db_con.get("_design/#{design_doc_name}")
+              couchdb_design = db_con.get("_design/#{design_doc_name}") rescue nil
 
-              # Update views from couchdb existing views
-              views = couchdb_design['views'].merge(views)
+              # Update couchdb existing views...
+              views = couchdb_design['views'].merge(views) unless couchdb_design.nil?
 
               if views.empty?
                 result << "No updatable views in #{doc}/#{File.basename(doc)}"
               else
+                rev = couchdb_design.nil? ? {} : { '_rev' => couchdb_design['_rev'] }
                 db_con.save_doc({
                                   '_id' => "_design/#{design_doc_name}",
-                                  '_rev' => couchdb_design['_rev'],
                                   'language' => 'javascript',
                                   'views' => views
-                                })
+                                }.merge(rev))
                 result << "Added views to _design/#{design_doc_name}: #{views.map {|k,v| k }.join(', ')}"
               end
             end
