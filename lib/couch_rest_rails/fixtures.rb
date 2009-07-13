@@ -14,7 +14,6 @@ module CouchRestRails
     end
 
     def load(database)
-      puts "database = #{database}"
       fixture_files = []
       return  "Database '#{database}' doesn't exists" unless (database == "*" ||
                                                               File.exist?(File.join(RAILS_ROOT, CouchRestRails.setup_path, database)))
@@ -38,7 +37,6 @@ module CouchRestRails
     end
 
     def dump(database)
-      puts "database = #{database}"
       return  "Database '#{database}' doesn't exists" unless (database == "*" ||
                                                               File.exist?(File.join(RAILS_ROOT, CouchRestRails.setup_path, database)))
       Dir[File.join(RAILS_ROOT, CouchRestRails.setup_path, database)].each do |db|
@@ -46,7 +44,6 @@ module CouchRestRails
           COUCHDB_CONFIG[:db_suffix]
         res = CouchRest.get("#{COUCHDB_CONFIG[:host_path]}/#{db_name}") rescue nil
         if res
-          i = "000"
           File.open(File.join(RAILS_ROOT, CouchRestRails.fixture_path, "#{database}.yml"), 'w' ) do |file|
             yaml_hash = {}
             db_con = CouchRest.database("#{COUCHDB_CONFIG[:host_path]}/#{db_name}")
@@ -55,7 +52,7 @@ module CouchRestRails
               doc = data["doc"]
               unless  (doc['_id'] =~ /^_design*/) == 0
                 doc.delete('_rev')
-                yaml_hash["#{database}_#{i.succ!}"] = doc
+                yaml_hash[doc['_id']] = doc
               end
             }
             file.write yaml_hash.to_yaml
@@ -63,6 +60,7 @@ module CouchRestRails
         end
       end
     end
+
     def random_blurb
       blurbs.sort_by {rand}.first
     end

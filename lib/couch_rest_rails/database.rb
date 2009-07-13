@@ -4,6 +4,7 @@ module CouchRestRails
     extend self
 
     def create(database)
+      resp = []
       return  "Database '#{database}' doesn't exists" unless
         (database == "*" || File.exist?(File.join(RAILS_ROOT,
                                                   CouchRestRails.setup_path,
@@ -18,22 +19,24 @@ module CouchRestRails
           database_name =COUCHDB_CONFIG[:db_prefix] +  File.basename(db) +
             COUCHDB_CONFIG[:db_suffix]
           if existing_databases.include?(database_name)
-            puts "The CouchDB database '#{database_name}' already exists"
+            resp << "The CouchDB database '#{database_name}' already exists"
           else
             # create the database
             COUCHDB_SERVER.create_db(database_name)
-            puts "Created the CouchDB database '#{database_name}'"
+            resp << "Created the CouchDB database '#{database_name}'"
             # create views on database
-            puts CouchRestRails::Views.push(File.basename(db),"*")
+            resp << CouchRestRails::Views.push(File.basename(db),"*")
             # create lucene-searches
-            puts CouchRestRails::Lucene.push(File.basename(db),"*")
+            resp << CouchRestRails::Lucene.push(File.basename(db),"*")
           end
         end
       end
-      "create complete"
+      resp << "create complete"
+      resp.join("\n")
     end
 
     def delete(database)
+      resp = []
       return  "Database '#{database}' doesn't exists" unless
         (database == "*" || File.exist?(File.join(RAILS_ROOT,
                                                   CouchRestRails.setup_path,
@@ -48,13 +51,14 @@ module CouchRestRails
             COUCHDB_CONFIG[:db_suffix]
           if existing_databases.include?(database_name)
             CouchRest.delete "#{COUCHDB_CONFIG[:host_path]}/#{database_name}"
-            puts "Dropped CouchDB database '#{database_name}'"
+            resp << "Dropped CouchDB database '#{database_name}'"
           else
-            puts "The CouchDB database '#{database_name}' does not exist"
+            resp << "The CouchDB database '#{database_name}' does not exist"
           end
         end
       end
-      "delete complete"
+      resp << "delete complete"
+      resp.join("\n")
     end
   end
 end

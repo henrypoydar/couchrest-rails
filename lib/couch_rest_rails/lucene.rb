@@ -6,9 +6,8 @@ module CouchRestRails
 
     # Push index/search views to CouchDB
     def push(database, design_doc)
-      puts "database = #{database} :: design_doc = #{design_doc}"
       result = []
-
+      result << "database = #{database} :: design_doc = #{design_doc}"
       db_dir = File.join(RAILS_ROOT, CouchRestRails.setup_path, database)
       return "Database '#{database}' does not exist" unless (database == "*" || File.exist?(db_dir))
 
@@ -54,7 +53,7 @@ module CouchRestRails
       search = {}
       Dir.glob(File.join(lucene_doc_path, '*')).each do |search_file|
         search_name = File.basename(search_file).sub(/\.js$/, '')
-        search[search_name] = JSON.parse IO.read(search_file)
+        search[search_name] = JSON.parse(IO.read(search_file).gsub(/\n/, ''))
       end
       search
     end
