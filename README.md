@@ -23,16 +23,16 @@ This plugin currently assumes your application only uses one CouchDB database.  
 
 Install with the native Rails plugin installation script:
 
-    script/plugin install git://github.com/hpoydar/couchrest-rails.git
+    script/plugin install git://github.com/hpoydar/couchrest_rails.git
 
 Or simply add to vendor/plugins and generate the files you need:
 
     script/generate couch_rest_rails relax
     
-The plugin creates one folder:
+The plugin creates two folder:
 
-* `db/couch/fixtures` - for storing CouchDB fixtures (yaml)
-* `db/couch/views` - for storing CouchDB map and reduce functions (views)
+* `db/couch/` - for storing CouchDB database information map and reduce functions (views) and lucene indexing (lucence
+* `test/fixtures/couch` - for storing and loading CouchDB fixtures (yaml)
 
 These paths can be customized in an initializer or environment configuration file:
 
@@ -61,7 +61,7 @@ There are also some simple matchers you can can use to spec validations.  See `s
 For models, inherit from CouchRestRails::Document, which hooks up CouchRest::ExtendedDocument to your CouchDB backend   and includes the [Validatable](http://validatable.rubyforge.org/) module:
 
     class YourCouchDocument < CouchRestRails::Document
-      use_database 'database_name'
+      use_database :database_name
 
       property  :email
       property  :question
@@ -86,12 +86,17 @@ See the CouchRest documentation and specs for more information about CouchRest::
 Custom views--outside of the ones defined in your CouchRestRails::Document models--that you want to push up to the CouchDB database/server instance should be in the following format:
 
     db/couch/<database_name>/views
-            |-- <design_document_name>
-                |-- <view_name>
-                    |-- map.js
-                    `-- reduce.js
-                
+                               |-- <design_document_name>
+                                   |-- <view_name>
+                                       |-- map.js
+                                       `-- reduce.js
+                            /lucene
+                               |-- <design_document_name>
+                                     |-- <lucene_search>
+ 
 Push up your views via rake (`rake couchdb:views:push`) or within your code or console (`CouchRestRails::Views.push`).
+
+Push up your lucene doc via rake (`rake couchdb:lucence:push`) or within your code or console (`CouchRestRails::Lucene.push`).
 
 ## Further development and testing
 
@@ -103,6 +108,19 @@ To run the test suite, you'll need rspec installed with rspec-rails library enab
     
 (The latter requires the ZenTest gem)
 
+# Rails integration unit testing 
+
+Create fixture file by via rake (`rake couchdb:fixture:dump[<database_name>]`) or within your code or console (`CouchRestRails::Fixtures.dump[<database_name>]`).
+
+Add fixtures to rails test:
+
+class RailsTest < Test::Unit::TestCase
+    couchdb_fixtures :<database_name>
+
+    ...
+
+end
+
 ## TODO
 
 * Roll up CouchRest::ExtendedDocument, since it might be deprecated from CouchRest (see CouchRest raw branch)
@@ -112,7 +130,6 @@ To run the test suite, you'll need rspec installed with rspec-rails library enab
 * Restful model/controller/test/spec generator
 * Gemify
 * Add more parseable options to couchdb.yml
-* Expand beyond a single database per application
 
 ## License
 

@@ -3,7 +3,7 @@ class CouchRestRailsGenerator < Rails::Generator::NamedBase
     record do |m|
 
       m.directory "db/couch"
-
+      m.directory "test/fixtures/couch"
       m.template "couchdb.yml", "config/couchdb.yml"
       m.template "couchdb_initializer.rb", "config/initializers/couchdb.rb"
     end
