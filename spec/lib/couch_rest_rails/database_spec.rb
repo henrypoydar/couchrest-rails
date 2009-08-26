@@ -13,13 +13,13 @@ describe CouchRestRails::Views do
   describe '#create' do
   
     it 'should create a CouchDB database for the current environment' do
-      CouchRestRails::Database.create
-      res = CouchRest.get(COUCHDB_CONFIG[:full_path])
+      CouchRestRails::Database.create('foo')
+      res = CouchRest.get('foo')
       res['db_name'].should == COUCHDB_CONFIG[:database]
     end
 
     it 'should do nothing and display a message if the database already exists' do
-      CouchRest.database!("#{COUCHDB_CONFIG[:full_path]}")
+      CouchRest.database!("foo")
       res = CouchRestRails::Database.create
       res.should =~ /already exists/i
     end

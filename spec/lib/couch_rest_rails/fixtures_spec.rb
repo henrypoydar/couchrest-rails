@@ -25,7 +25,7 @@ describe CouchRestRails::Fixtures do
     end
   
     it "should exit if the database doesn't exist" do
-      res = CouchRestRails::Fixtures.load
+      res = CouchRestRails::Fixtures.load('foo')
       res.should =~ /does not exist/i
     end
 

@@ -10,7 +10,7 @@ Specifically, this plugin provides the following utilities:
 * Setup and teardown helpers for spec'ing and testing
 * A paper-thin wrapper around CouchRest::ExtendedDocument
 
-This plugin currently assumes your application only uses one CouchDB database.  It does not interfere with the traditional relational database backend, so you can use that as a datastore alongside CouchDB if you want.  (In fact, you'll have to unwire the requirement for a relational database if you don't want to use one.)
+This plugin does not interfere with the traditional relational database backend, so you can use that as a datastore alongside CouchDB if you want.  (In fact, you'll have to unwire the requirement for a relational database if you don't want to use one.)
 
 ## Requirements
 
