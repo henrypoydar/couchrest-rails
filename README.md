@@ -9,15 +9,18 @@ Specifically, this plugin provides the following utilities:
 * CouchDB-specific fixtures
 * Setup and teardown helpers for spec'ing and testing
 * A paper-thin wrapper around CouchRest::ExtendedDocument
+* Support for multiple CouchDB databases per application
 
 This plugin does not interfere with the traditional relational database backend, so you can use that as a datastore alongside CouchDB if you want.  (In fact, you'll have to unwire the requirement for a relational database if you don't want to use one.)
 
 ## Requirements
 
 * [CouchRest gem](http://github.com/jchris/couchrest)
+* [Validatable gem](http://validatable.rubyforge.org/)
+* [JSON gem](http://json.rubyforge.com)
 * [RSpec](http://github.com/dchelimsky/rspec) BDD framework (optional - for running plugin specs)
 * [RSpec-Rails](http://github.com/dchelimsky/rspec-rails) library (optional - for running plugin specs)
-
+* Lucene (optional) for full text searching of CouchDB documents
 
 ## Installation
 
@@ -29,7 +32,7 @@ Or simply add to vendor/plugins and generate the files you need:
 
     script/generate couch_rest_rails relax
     
-The plugin creates two folder:
+The plugin creates two folders:
 
 * `db/couch/` - for storing CouchDB database information map and reduce functions (views) and lucene indexing (lucence
 * `test/fixtures/couch` - for storing and loading CouchDB fixtures (yaml)
@@ -43,7 +46,7 @@ These paths can be customized in an initializer or environment configuration fil
 
 ### Rake tasks
 
-Use the rake tasks to create, delete, reset, push views and load fixtures:
+Use the rake tasks to create databases, delete databases, reset databases, push views and load fixtures:
 
     rake -T | grep couchdb
     
@@ -58,7 +61,7 @@ There are also some simple matchers you can can use to spec validations.  See `s
 
 ### CouchRestRails document model
 
-For models, inherit from CouchRestRails::Document, which hooks up CouchRest::ExtendedDocument to your CouchDB backend   and includes the [Validatable](http://validatable.rubyforge.org/) module:
+For models, inherit from CouchRestRails::Document, which hooks up CouchRest::ExtendedDocument to your CouchDB backend and includes the [Validatable](http://validatable.rubyforge.org/) module:
 
     class YourCouchDocument < CouchRestRails::Document
       use_database :database_name
@@ -78,6 +81,8 @@ For models, inherit from CouchRestRails::Document, which hooks up CouchRest::Ext
       ...
       
     end
+    
+Make sure you define your database in the model with the `use_database :<database_name>` directive.
 
 See the CouchRest documentation and specs for more information about CouchRest::ExtendedDocument. (The views defined here are in addition to the ones you can manually set up and push via rake in db/couch/views.)
 
@@ -90,11 +95,24 @@ Custom views--outside of the ones defined in your CouchRestRails::Document model
                                    |-- <view_name>
                                        |-- map.js
                                        `-- reduce.js
-                            /lucene
-                               |-- <design_document_name>
-                                     |-- <lucene_search>
  
 Push up your views via rake (`rake couchdb:views:push`) or within your code or console (`CouchRestRails::Views.push`).
+
+### Lucene
+
+If you want to support Lucene full-text searching of CouchDB documents, enable support for it in an initializer or environment configuration file:
+
+    CouchRestRails.use_lucene  = true
+    
+The Lucene design documents are stored alongside the views:
+    
+    db/couch/<database_name>/lucene
+                               |-- <design_document_name>
+                                     |-- <lucene_search>
+
+You can also customize this path:
+
+    CouchRestRails.lucene_path = 'custom/path/to/your/lucene/docs/from/app/root'
 
 Push up your lucene doc via rake (`rake couchdb:lucence:push`) or within your code or console (`CouchRestRails::Lucene.push`).
 
@@ -114,22 +132,28 @@ Create fixture file by via rake (`rake couchdb:fixture:dump[<database_name>]`) o
 
 Add fixtures to rails test:
 
-class RailsTest < Test::Unit::TestCase
-    couchdb_fixtures :<database_name>
+    class RailsTest < Test::Unit::TestCase
+      couchdb_fixtures :<database_name>
 
-    ...
+      ...
+    end
 
-end
+## TODO / Further development
 
-## TODO
-
+* Document lucene as option
+* Better doucment lucene
+* Document database from the model
 * Roll up CouchRest::ExtendedDocument, since it might be deprecated from CouchRest (see CouchRest raw branch)
 * A persistent connection object? Keep-alive?
+* Error class for CouchRestRails::Document with I18n support
 * Hook into Rails logger to display times for CouchDB operations
 * Mechanism for better view testing?
 * Restful model/controller/test/spec generator
+* Support a default database for all CouchRestRails::Document models
 * Gemify
 * Add more parseable options to couchdb.yml
+
+_Please don't submit any pull requests with failing specs_
 
 ## License
 

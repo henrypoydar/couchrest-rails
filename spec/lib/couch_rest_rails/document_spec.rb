@@ -18,5 +18,12 @@ describe CouchRestRails::Document do
     @doc.database.name.should == "#{COUCHDB_CONFIG[:db_prefix]}foo#{COUCHDB_CONFIG[:db_suffix]}"
   end
 
+  describe '.unadorned_database_name' do
+    
+    it "should return the database name without the prefix and suffix" do
+      CouchRestRailsTestDocument.unadorned_database_name.should == 'foo'
+    end
+    
+  end
   
 end

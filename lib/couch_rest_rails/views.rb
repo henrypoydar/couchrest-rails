@@ -6,7 +6,7 @@ module CouchRestRails
     def push(database, design_doc)
       result = []
       result << "database = #{database} :: design_doc = #{design_doc}"
-      db_dir = File.join(RAILS_ROOT, CouchRestRails.setup_path, database)
+      db_dir = File.join(RAILS_ROOT, CouchRestRails.views_path, database)
       return "Database directory '#{database}' does not exist" unless (database == "*" || File.exist?(db_dir))
 
       Dir[db_dir].each do |db|
