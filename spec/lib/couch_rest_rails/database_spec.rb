@@ -1,8 +1,9 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe CouchRestRails::Views do
+describe CouchRestRails::Database do
 
   before :each do
+    CouchRestRails.use_lucene = true
     CouchRestRails.views_path = 'vendor/plugins/couchrest-rails/spec/mock/views'
     @foo_db_name = [
       COUCHDB_CONFIG[:db_prefix], 'foo',
@@ -22,7 +23,7 @@ describe CouchRestRails::Views do
     CouchRest.delete(@foo_db_url) rescue nil
     CouchRest.delete(@bar_db_url) rescue nil
     FileUtils.rm_rf(File.join(RAILS_ROOT, CouchRestRails.views_path, 'foo', 'views'))
-    FileUtils.rm_rf(File.join(RAILS_ROOT, CouchRestRails.views_path, 'foo', 'lucene'))
+    FileUtils.rm_rf(File.join(RAILS_ROOT, CouchRestRails.views_path, 'bar', 'lucene'))
   end
   
   describe '#create' do
@@ -45,9 +46,8 @@ describe CouchRestRails::Views do
     end
     
     it 'should create a folder to store lucene design docs if Lucene is enabled' do
-      CouchRestRails.use_lucene = true
       res = CouchRestRails::Database.create('foo')
-      File.exist?(File.join(RAILS_ROOT, CouchRestRails.views_path, 'foo', 'lucene')).should be_true
+      File.exist?(File.join(RAILS_ROOT, CouchRestRails.lucene_path, 'foo', 'lucene')).should be_true
     end
     
     it 'should create all databases as defined in CouchRestRails::Document models when no argument is specified' do
@@ -64,7 +64,6 @@ describe CouchRestRails::Views do
       b['db_name'].should == @bar_db_name
     end
 
-
   end
   
   describe "#delete" do
@@ -80,32 +79,33 @@ describe CouchRestRails::Views do
       res.should =~ /does not exist/i
     end
     
-    it 'should delete all databases as defined in CouchRestRails::Document models when no argument is specified'
+    it 'should delete all databases as defined in CouchRestRails::Document models when no argument is specified' do
+      CouchRest.database!(@foo_db_url)
+      CouchRest.database!(@bar_db_url)
+      CouchRestRails::Database.delete
+      lambda {CouchRest.get(@foo_db_url)}.should raise_error('Resource not found')
+      lambda {CouchRest.get(@bar_db_url)}.should raise_error('Resource not found')
+    end  
     
-
   end
   
   describe '#list' do
 
     it 'should return a sorted array of all CouchDB databases for the application' do
-      lambda do
-        class CouchRestRailsTestDocumentFoo < CouchRestRails::Document 
-          use_database :foo
-        end 
-        class CouchRestRailsTestDocumentBar < CouchRestRails::Document 
-          use_database :bar
-        end
-      end.call
+      class CouchRestRailsTestDocumentFoo < CouchRestRails::Document 
+        use_database :foo
+      end 
+      class CouchRestRailsTestDocumentBar < CouchRestRails::Document 
+        use_database :bar
+      end
       CouchRestRails::Database.list.include?('bar').should be_true
       CouchRestRails::Database.list.include?('foo').should be_true
       CouchRestRails::Database.list.index('foo').should > CouchRestRails::Database.list.index('bar')
     end
 
     it 'should raise an error if a model does not have a database defined' do
-      lambda do
-        class CouchRestRailsTestDocumentNoDatabase < CouchRestRails::Document 
-        end
-      end.call
+      class CouchRestRailsTestDocumentNoDatabase < CouchRestRails::Document 
+      end
       lambda {CouchRestRails::Database.list}.should raise_error('CouchRestRailsTestDocumentNoDatabase does not have a database defined')
     end
 

@@ -27,8 +27,8 @@ module CouchRestRails
         # Setup the Lucene directory if enabled
         if CouchRestRails.use_lucene
           database_lucene_path = File.join(RAILS_ROOT, CouchRestRails.lucene_path, db, 'lucene')
-          unless File.exist?(database_views_path)
-            FileUtils.mkdir_p(database_views_path)
+          unless File.exist?(database_lucene_path)
+            FileUtils.mkdir_p(database_lucene_path)
             response << "Created #{File.join(CouchRestRails.lucene_path, db, 'lucene')} Lucene directory"
           end
         end
