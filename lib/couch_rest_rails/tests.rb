@@ -5,7 +5,7 @@ module CouchRestRails
     mattr_accessor :fixtures_loaded
     self.fixtures_loaded = Set.new
 
-    def setup(database="*")
+    def setup(database = "*")
       ENV['RAILS_ENV'] = CouchRestRails.test_environment
       unless fixtures_loaded.include?(database)
         CouchRestRails::Database.delete(database)
@@ -20,7 +20,7 @@ module CouchRestRails
       fixtures_loaded.clear
     end
 
-    def teardown(database="*")
+    def teardown(database = "*")
       ENV['RAILS_ENV'] = CouchRestRails.test_environment
       CouchRestRails::Database.delete(database)
       CouchRestRails::Database.create(database)
@@ -31,7 +31,6 @@ end
 module Test
   module Unit #:nodoc:
     class TestCase #:nodoc:
-      
       
       setup :setup_couchdb_fixtures if defined?(setup)
       teardown :teardown_couchdb_fixtures if defined?(teardown)
