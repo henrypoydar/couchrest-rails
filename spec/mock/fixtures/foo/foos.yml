@@ -1,6 +1,6 @@
 <% def blurb; CouchRestRails::Fixtures.random_blurb; end %>
 
-<% 5.times do |i| %>
+<% 10.times do |i| %>
 record_<%= i %>:
   type: Foo
   title: <%= blurb.split('.').first %>

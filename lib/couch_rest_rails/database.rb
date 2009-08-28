@@ -1,21 +1,11 @@
 module CouchRestRails
   module Database
-    include FileUtils
 
     extend self
     
     def create(database_name = '*')
       
-      # If wildcard passed, use model definitions for database names
-      if database_name == '*'
-        databases = CouchRestRails::Database.list
-      else
-        databases = [database_name]
-      end
-      
-      response = ['']
-      
-      databases.each do |db|
+      CouchRestRails.process_database_method(database_name) do |db, response|
         
         # Setup up views directory
         database_views_path = File.join(RAILS_ROOT, CouchRestRails.views_path, db, 'views')
@@ -54,22 +44,13 @@ module CouchRestRails
         response << CouchRestRails::Lucene.push(File.basename(db), "*") if CouchRestRails.use_lucene
         
       end
-      response << ['']
-      response.join("\n")
+      
     end
 
     def delete(database_name = '*')
       
-      # If wildcard passed, use model definitions for database names
-      if database_name == '*'
-        databases = CouchRestRails::Database.list
-      else
-        databases = [database_name]
-      end
+      CouchRestRails.process_database_method(database_name) do |db, response|
       
-      response = ['']
-      
-      databases.each do |db|
         full_db_name = [COUCHDB_CONFIG[:db_prefix], File.basename(db), COUCHDB_CONFIG[:db_suffix]].join
         if !COUCHDB_SERVER.databases.include?(full_db_name)
           response << "Database #{db} (#{full_db_name}) does not exist"
@@ -91,8 +72,7 @@ module CouchRestRails
         end
         
       end
-      response << ''
-      response.join("\n")
+
     end
 
     def list

@@ -122,7 +122,7 @@ You can customize this path in an initializer or environment file:
 
 #### Rails integration unit testing 
 
-Create fixture file by via rake (`rake couchdb:fixture:dump[<database_name>]`) or within your code or console (`CouchRestRails::Fixtures.dump[<database_name>]`).
+Create fixture file by via rake (`rake couchdb:fixtures:dump[<database_name>]`) or within your code or console (`CouchRestRails::Fixtures.dump[<database_name>]`).
 
 Add fixtures to rails test:
 

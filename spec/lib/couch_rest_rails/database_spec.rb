@@ -23,10 +23,7 @@ describe CouchRestRails::Database do
   after :all do
     CouchRest.delete(@foo_db_url) rescue nil
     CouchRest.delete(@bar_db_url) rescue nil
-    FileUtils.rm_rf(File.join(RAILS_ROOT, CouchRestRails.views_path, 'foo'))
-    FileUtils.rm_rf(File.join(RAILS_ROOT, CouchRestRails.views_path, 'bar'))
-    FileUtils.rm_rf(File.join(RAILS_ROOT, CouchRestRails.lucene_path, 'foo'))
-    FileUtils.rm_rf(File.join(RAILS_ROOT, CouchRestRails.lucene_path, 'bar'))
+    cleanup_view_paths
   end
   
   describe '#create' do
