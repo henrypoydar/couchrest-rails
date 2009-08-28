@@ -10,8 +10,11 @@ Specifically, this plugin provides the following utilities:
 * Setup and teardown helpers for spec'ing and testing
 * A paper-thin wrapper around CouchRest::ExtendedDocument
 * Support for multiple CouchDB databases per application
+* Optional support for Lucene full-text indexing and searching of your CouchDB databases and documents
 
 This plugin does not interfere with the traditional relational database backend, so you can use that as a datastore alongside CouchDB if you want.  (In fact, you'll have to unwire the requirement for a relational database if you don't want to use one.)
+
+This plugin assumes some knowledge of CouchDB and its important differences from conventional Rails data storage (RDBMS) options.  See [the CouchDB site](http://couchdb.apache.org) for more information.  
 
 ## Requirements
 
@@ -34,7 +37,7 @@ Or simply add to vendor/plugins and generate the files you need:
     
 The plugin creates two folders:
 
-* `db/couch/` - for storing CouchDB database information map and reduce functions (views) and lucene indexing (lucence
+* `db/couch/` - For storing CouchDB database information map and reduce functions (views)
 * `test/fixtures/couch` - for storing and loading CouchDB fixtures (yaml)
 
 These paths can be customized in an initializer or environment configuration file:
@@ -42,23 +45,22 @@ These paths can be customized in an initializer or environment configuration fil
     CouchRestRails.fixtures_path  = 'custom/path/to/your/fixtures/from/app/root'
     CouchRestRails.views_path     = 'custom/path/to/your/views/from/app/root'
     
+The installation process will also create a `config/couchdb.yml` file for customizing your configuration.
+    
 ## Usage    
+
+### Configuration
+
+The `couchdb.yml` file can be customized to support the specifics of your particular CouchDB installation.  Since multiple databases per application are supported, it is recommended that you specify a `database_prefix` for use in naming the database on the CouchDB server.  This will make it much easier to peer into your server with Sofa and figure out which databases belong to which application.
+
+Database names are defined in the `CouchRestRails::Document` models that use them.  (See below, 'CouchRestRails document model')
 
 ### Rake tasks
 
 Use the rake tasks to create databases, delete databases, reset databases, push views and load fixtures:
 
-    rake -T | grep couchdb
+    rake -T | grep couchdb  
     
-### Tests and specs
-    
-For testing or spec'ing, use these helpers to setup and teardown a test database with fixtures:
-
-    CouchRestRails::Tests.setup
-    CouchRestRails::Tests.teardown
-    
-There are also some simple matchers you can can use to spec validations.  See `spec/lib/matchers`.
-
 ### CouchRestRails document model
 
 For models, inherit from CouchRestRails::Document, which hooks up CouchRest::ExtendedDocument to your CouchDB backend and includes the [Validatable](http://validatable.rubyforge.org/) module:
@@ -74,20 +76,20 @@ For models, inherit from CouchRestRails::Document, which hooks up CouchRest::Ext
       timestamps!
 
       view_by :email
-      
+
       validates_presence_of :question
       validates_numericality_of :rating
-      
+
       ...
-      
+
     end
-    
+
 Make sure you define your database in the model with the `use_database :<database_name>` directive.
 
 See the CouchRest documentation and specs for more information about CouchRest::ExtendedDocument. (The views defined here are in addition to the ones you can manually set up and push via rake in db/couch/views.)
 
 ### CouchDB views
-    
+
 Custom views--outside of the ones defined in your CouchRestRails::Document models--that you want to push up to the CouchDB database/server instance should be in the following format:
 
     db/couch/<database_name>/views
@@ -95,8 +97,40 @@ Custom views--outside of the ones defined in your CouchRestRails::Document model
                                    |-- <view_name>
                                        |-- map.js
                                        `-- reduce.js
- 
+
 Push up your views via rake (`rake couchdb:views:push`) or within your code or console (`CouchRestRails::Views.push`).
+
+    
+### Tests, specs and fixtures
+    
+For testing or spec'ing, use these helpers to setup and teardown a test database with fixtures:
+
+    CouchRestRails::Tests.setup
+    CouchRestRails::Tests.teardown
+    
+There are also some simple matchers you can can use to spec validations.  See `spec/lib/matchers`.
+
+You can store fixtures as Yaml files in the following path pattern:
+
+    test/fixtures/couch/<database_name>/
+                           |-- first_fixtures.yml
+                           |-- some_more_fixtures.yml
+                           
+You can customize this path in an initializer or environment file:
+
+    CouchRestRails.fixtures_path = 'custom/path/to/your/fixtures'
+
+#### Rails integration unit testing 
+
+Create fixture file by via rake (`rake couchdb:fixture:dump[<database_name>]`) or within your code or console (`CouchRestRails::Fixtures.dump[<database_name>]`).
+
+Add fixtures to rails test:
+
+    class RailsTest < Test::Unit::TestCase
+      couchdb_fixtures :<database_name>
+
+      ...
+    end
 
 ### Lucene
 
@@ -126,23 +160,10 @@ To run the test suite, you'll need rspec installed with rspec-rails library enab
     
 (The latter requires the ZenTest gem)
 
-# Rails integration unit testing 
+_Please don't submit any pull requests with failing specs_
 
-Create fixture file by via rake (`rake couchdb:fixture:dump[<database_name>]`) or within your code or console (`CouchRestRails::Fixtures.dump[<database_name>]`).
+### TODO 
 
-Add fixtures to rails test:
-
-    class RailsTest < Test::Unit::TestCase
-      couchdb_fixtures :<database_name>
-
-      ...
-    end
-
-## TODO / Further development
-
-* Document lucene as option
-* Better doucment lucene
-* Document database from the model
 * Roll up CouchRest::ExtendedDocument, since it might be deprecated from CouchRest (see CouchRest raw branch)
 * A persistent connection object? Keep-alive?
 * Error class for CouchRestRails::Document with I18n support
@@ -152,8 +173,6 @@ Add fixtures to rails test:
 * Support a default database for all CouchRestRails::Document models
 * Gemify
 * Add more parseable options to couchdb.yml
-
-_Please don't submit any pull requests with failing specs_
 
 ## License
 
