@@ -112,9 +112,7 @@ There are also some simple matchers you can can use to spec validations.  See `s
 
 You can store fixtures as Yaml files in the following path pattern:
 
-    test/fixtures/couch/<database_name>/
-                           |-- first_fixtures.yml
-                           |-- some_more_fixtures.yml
+    test/fixtures/couch/<database_name>.yml
                            
 You can customize this path in an initializer or environment file:
 

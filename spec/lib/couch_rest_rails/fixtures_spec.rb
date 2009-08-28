@@ -70,6 +70,41 @@ describe CouchRestRails::Fixtures do
   
   describe "#dump" do
     
+    before :each do
+      ['foo', 'bar'].each do |db|
+        FileUtils.cp(File.join(RAILS_ROOT, CouchRestRails.fixtures_path, "#{db}.yml"), 
+          File.join(RAILS_ROOT, CouchRestRails.fixtures_path, "#{db}x.yml"))
+        CouchRestRails::Database.create("#{db}x")
+        CouchRestRails::Fixtures.load("#{db}x")
+        FileUtils.rm_rf(File.join(RAILS_ROOT, CouchRestRails.fixtures_path, "#{db}x.yml"))
+      end
+    end
+    
+    after :each do
+      ['foo', 'bar'].each do |db|
+        CouchRestRails::Database.delete("#{db}x")
+        FileUtils.rm_rf(File.join(RAILS_ROOT, CouchRestRails.fixtures_path, "#{db}x.yml"))
+      end
+      cleanup_view_paths
+    end
+    
+    it "should dump fixtures for the specified database" do
+      res = CouchRestRails::Fixtures.dump('foox')
+      File.exist?(File.join(RAILS_ROOT, CouchRestRails.fixtures_path, 'foox.yml')).should be_true
+    end
+    
+    it "should dump fixtures for all databases as defined in CouchRestRails::Document models if no argument is specified" do
+      class CouchRestRailsTestDocumentFoo < CouchRestRails::Document 
+        use_database :foox
+      end 
+      class CouchRestRailsTestDocumentBar < CouchRestRails::Document 
+        use_database :barx
+      end
+      CouchRestRails::Fixtures.dump
+      File.exist?(File.join(RAILS_ROOT, CouchRestRails.fixtures_path, 'foox.yml')).should be_true
+      File.exist?(File.join(RAILS_ROOT, CouchRestRails.fixtures_path, 'barx.yml')).should be_true
+    end  
+    
   end
 
 end

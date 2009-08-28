@@ -17,8 +17,8 @@ module CouchRestRails
       
       CouchRestRails.process_database_method(database_name) do |db, response|
        
-        unless File.exist?(File.join(RAILS_ROOT, CouchRestRails.fixtures_path, db))
-          response << "Fixtures directory (#{File.join(CouchRestRails.fixtures_path, db)}) does not exist"
+        unless File.exist?(File.join(RAILS_ROOT, CouchRestRails.fixtures_path, "#{db}.yml"))
+          response << "Fixtures file (#{File.join(CouchRestRails.fixtures_path, "#{db}.yml")}) does not exist"
         else
           full_db_name = [COUCHDB_CONFIG[:db_prefix], db, COUCHDB_CONFIG[:db_suffix]].join
           full_db_path = [COUCHDB_CONFIG[:host_path], '/', full_db_name].join
@@ -27,7 +27,7 @@ module CouchRestRails
           else
             db_conn = CouchRest.database(full_db_path)
             fixture_files = []
-            Dir.glob(File.join(RAILS_ROOT, CouchRestRails.fixtures_path, db, "*.yml")).each do |file|
+            Dir.glob(File.join(RAILS_ROOT, CouchRestRails.fixtures_path, "#{db}.yml")).each do |file|
               db_conn.bulk_save(YAML::load(ERB.new(IO.read(file)).result).map {|f| f[1]})
               fixture_files << File.basename(file)
             end
@@ -44,27 +44,34 @@ module CouchRestRails
     end
 
     def dump(database_name = '*')
-      return  "Database '#{database}' doesn't exists" unless (database == "*" ||
-                                                              File.exist?(File.join(RAILS_ROOT, CouchRestRails.setup_path, database)))
-      Dir[File.join(RAILS_ROOT, CouchRestRails.setup_path, database)].each do |db|
-        db_name =COUCHDB_CONFIG[:db_prefix] +  File.basename( db) +
-          COUCHDB_CONFIG[:db_suffix]
-        res = CouchRest.get("#{COUCHDB_CONFIG[:host_path]}/#{db_name}") rescue nil
-        if res
-          File.open(File.join(RAILS_ROOT, CouchRestRails.fixture_path, "#{database}.yml"), 'w' ) do |file|
+      
+      CouchRestRails.process_database_method(database_name) do |db, response|
+        
+        full_db_name = [COUCHDB_CONFIG[:db_prefix], db, COUCHDB_CONFIG[:db_suffix]].join
+        full_db_path = [COUCHDB_CONFIG[:host_path], '/', full_db_name].join
+        unless COUCHDB_SERVER.databases.include?(full_db_name)
+          response << "The CouchDB database #{db} (#{full_db_name}) does not exist"
+        else
+          fixtures_file = File.join(RAILS_ROOT, CouchRestRails.fixtures_path, "#{db}.yml")
+          if File.exist?(fixtures_file)
+            response << "Overwriting fixtures in #{File.join(CouchRestRails.fixtures_path, "#{db}.yml")}"
+          end
+          File.open(fixtures_file, 'w' ) do |file|
             yaml_hash = {}
-            db_con = CouchRest.database("#{COUCHDB_CONFIG[:host_path]}/#{db_name}")
-            docs = db_con.documents(:include_docs =>true )
-            docs["rows"].each { |data|
+            db_conn = CouchRest.database(full_db_path)
+            docs = db_conn.documents(:include_docs => true)
+            docs["rows"].each do |data|
               doc = data["doc"]
               unless  (doc['_id'] =~ /^_design*/) == 0
                 doc.delete('_rev')
                 yaml_hash[doc['_id']] = doc
               end
-            }
+            end
             file.write yaml_hash.to_yaml
           end
+          response << "Dumped fixtures into #{File.join(CouchRestRails.fixtures_path, "#{db}.yml")}"
         end
+
       end
     end
   
