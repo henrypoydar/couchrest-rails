@@ -42,6 +42,11 @@ module CouchRestRails
           response << "Created database #{db} (#{full_db_name})"
         end
         
+        # Warn if no model uses the database
+        unless CouchRestRails::Database.list.include?(full_db_name)
+          response << "WARNING: there are no CouchRestRails::Document models using #{db}"
+        end 
+        
         # Push up the views
         response << CouchRestRails::Views.push(File.basename(db), "*")
         
@@ -72,6 +77,19 @@ module CouchRestRails
           CouchRest.delete "#{COUCHDB_CONFIG[:host_path]}/#{full_db_name}"
           response << "Deleted database #{db} (#{full_db_name})"
         end
+        
+        # Warn if views path still present for database
+        if File.exist?(File.join(RAILS_ROOT, CouchRestRails.views_path, db, 'views'))
+          response << "WARNING: #{File.join(CouchRestRails.views_path, db, 'views')} views path still present"
+        end
+        
+        # Warn if Lucene path still present for database
+        if CouchRestRails.use_lucene
+          if File.exist?(File.join(RAILS_ROOT, CouchRestRails.lucene_path, db, 'views'))
+            response << "WARNING: #{File.join(CouchRestRails.lucene_path, db, 'views')} Lucene path still present"
+          end
+        end
+        
       end
       response << ''
       response.join("\n")
