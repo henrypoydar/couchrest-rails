@@ -19,26 +19,28 @@ module CouchRestRails
        
         unless File.exist?(File.join(RAILS_ROOT, CouchRestRails.fixtures_path, "#{db}.yml"))
           response << "Fixtures file (#{File.join(CouchRestRails.fixtures_path, "#{db}.yml")}) does not exist"
-        else
-          full_db_name = [COUCHDB_CONFIG[:db_prefix], db, COUCHDB_CONFIG[:db_suffix]].join
-          full_db_path = [COUCHDB_CONFIG[:host_path], '/', full_db_name].join
-          unless COUCHDB_SERVER.databases.include?(full_db_name)
-            response << "The CouchDB database #{db} (#{full_db_name}) does not exist - create it first"
-          else
-            db_conn = CouchRest.database(full_db_path)
-            fixture_files = []
-            Dir.glob(File.join(RAILS_ROOT, CouchRestRails.fixtures_path, "#{db}.yml")).each do |file|
-              db_conn.bulk_save(YAML::load(ERB.new(IO.read(file)).result).map {|f| f[1]})
-              fixture_files << File.basename(file)
-            end
-            if fixture_files.empty?
-              response << "No fixtures found in #{CouchRestRails.fixtures_path}"
-            else
-              response << "Loaded the following fixture files into #{db} (#{full_db_name}): #{fixture_files.join(', ')}"
-            end
-          end
+          next
         end
-
+        
+        full_db_name = [COUCHDB_CONFIG[:db_prefix], db, COUCHDB_CONFIG[:db_suffix]].join
+        full_db_path = [COUCHDB_CONFIG[:host_path], '/', full_db_name].join
+        unless COUCHDB_SERVER.databases.include?(full_db_name)
+          response << "The CouchDB database #{db} (#{full_db_name}) does not exist - create it first"
+          next
+        end
+        
+        db_conn = CouchRest.database(full_db_path)
+        fixture_files = []
+        Dir.glob(File.join(RAILS_ROOT, CouchRestRails.fixtures_path, "#{db}.yml")).each do |file|
+          db_conn.bulk_save(YAML::load(ERB.new(IO.read(file)).result).map {|f| f[1]})
+          fixture_files << File.basename(file)
+        end
+        if fixture_files.empty?
+          response << "No fixtures found in #{CouchRestRails.fixtures_path}"
+        else
+          response << "Loaded the following fixture files into #{db} (#{full_db_name}): #{fixture_files.join(', ')}"
+        end
+        
       end
 
     end
@@ -51,27 +53,30 @@ module CouchRestRails
         full_db_path = [COUCHDB_CONFIG[:host_path], '/', full_db_name].join
         unless COUCHDB_SERVER.databases.include?(full_db_name)
           response << "The CouchDB database #{db} (#{full_db_name}) does not exist"
-        else
-          fixtures_file = File.join(RAILS_ROOT, CouchRestRails.fixtures_path, "#{db}.yml")
-          if File.exist?(fixtures_file)
-            response << "Overwriting fixtures in #{File.join(CouchRestRails.fixtures_path, "#{db}.yml")}"
-          end
-          File.open(fixtures_file, 'w' ) do |file|
-            yaml_hash = {}
-            db_conn = CouchRest.database(full_db_path)
-            docs = db_conn.documents(:include_docs => true)
-            docs["rows"].each do |data|
-              doc = data["doc"]
-              unless  (doc['_id'] =~ /^_design*/) == 0
-                doc.delete('_rev')
-                yaml_hash[doc['_id']] = doc
-              end
-            end
-            file.write yaml_hash.to_yaml
-          end
-          response << "Dumped fixtures into #{File.join(CouchRestRails.fixtures_path, "#{db}.yml")}"
+          next
         end
-
+        
+        fixtures_file = File.join(RAILS_ROOT, CouchRestRails.fixtures_path, "#{db}.yml")
+        if File.exist?(fixtures_file)
+          response << "Overwriting fixtures in #{File.join(CouchRestRails.fixtures_path, "#{db}.yml")}"
+        end
+        
+        File.open(fixtures_file, 'w' ) do |file|
+          yaml_hash = {}
+          db_conn = CouchRest.database(full_db_path)
+          docs = db_conn.documents(:include_docs => true)
+          docs["rows"].each do |data|
+            doc = data["doc"]
+            unless  (doc['_id'] =~ /^_design*/) == 0
+              doc.delete('_rev')
+              yaml_hash[doc['_id']] = doc
+            end
+          end
+          file.write yaml_hash.to_yaml
+        end
+        
+        response << "Dumped fixtures into #{File.join(CouchRestRails.fixtures_path, "#{db}.yml")}"
+        
       end
     end
   
