@@ -23,28 +23,24 @@ module CouchRestRails
           end
         end
         
-        # Create the database
         full_db_name = [COUCHDB_CONFIG[:db_prefix], File.basename(db), COUCHDB_CONFIG[:db_suffix]].join
+        
+        # Warn if no model uses the database
+        unless CouchRestRails::Database.list.include?(full_db_name)
+          response << "WARNING: there are no CouchRestRails::Document models using #{db}"
+        end
+        
+        # Create the database
         if COUCHDB_SERVER.databases.include?(full_db_name)
           response << "Database #{db} (#{full_db_name}) already exists"
+          next
         else
           COUCHDB_SERVER.create_db(full_db_name)
           response << "Created database #{db} (#{full_db_name})"
         end
         
-        # Warn if no model uses the database
-        unless CouchRestRails::Database.list.include?(full_db_name)
-          response << "WARNING: there are no CouchRestRails::Document models using #{db}"
-        end 
-        
-        # Push up the views
-        response << CouchRestRails::Views.push(File.basename(db), "*")
-        
-        # Push up Lucene doc if Lucene enabled
-        response << CouchRestRails::Lucene.push(File.basename(db), "*") if CouchRestRails.use_lucene
-        
       end
-      
+
     end
 
     def delete(database_name = '*')

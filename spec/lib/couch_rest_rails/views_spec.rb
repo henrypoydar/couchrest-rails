@@ -14,15 +14,25 @@ describe CouchRestRails::Views do
   describe '#push' do
   
     it "should push the views in CouchRestRails.views_path to a design document for the specified database" do
-      CouchRestRails::Tests.setup('foo') # Pushes views
-      db = CouchRest.database(COUCHDB_CONFIG[:full_path])
-      db.view('foos/all')['rows'].size.should == 5
+      res = CouchRestRails::Database.delete('foo')
+      res = CouchRestRails::Database.create('foo')
+      res = CouchRestRails::Fixtures.load('foo')
+      res = CouchRestRails::Views.push('foo')
+      db = CouchRest.database(@foo_db_url)      
+      db.view("#{@foo_db_name}/all")['rows'].size.should == 10
+    end
+    
+    it "should replace existing views but issue a warning" do
+      CouchRestRails::Tests.setup('foo')
+      res = CouchRestRails::Views.push('foo')
+      res.should =~ /overwriting/
     end
     
     it "should push the views in CouchRestRails.views_path to a design document for all databases if * is passed" do
-      CouchRestRails::Tests.setup # Pushes views
-      db = CouchRest.database(COUCHDB_CONFIG[:full_path])
-      db.view('foos/all')['rows'].size.should == 5
+      CouchRestRails::Tests.setup
+      dbf = CouchRest.database(@foo_db_url)
+      dbb = CouchRest.database(@bar_db_url)
+      (dbf.view("#{@foo_db_name}/all")['rows'].size + dbb.view("#{@foo_db_name}/all")['rows'].size).should == 15
     end
   
   end

@@ -52,9 +52,9 @@ describe CouchRestRails::Fixtures do
       CouchRestRails::Database.create('foo')
       CouchRestRails::Database.create('bar')
       CouchRestRails::Fixtures.load
-      db_foo = CouchRest.database(@foo_db_url)
-      db_bar = CouchRest.database(@bar_db_url)
-      (db_foo.documents['rows'].size + db_bar.documents['rows'].size).should == 15
+      dbf = CouchRest.database(@foo_db_url)
+      dbb = CouchRest.database(@bar_db_url)
+      (dbf.documents['rows'].size + dbb.documents['rows'].size).should == 15
     end
   
   end

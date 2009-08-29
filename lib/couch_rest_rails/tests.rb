@@ -11,6 +11,7 @@ module CouchRestRails
         CouchRestRails::Database.delete(database)
         CouchRestRails::Database.create(database)
         CouchRestRails::Fixtures.load(database)
+        CouchRestRails::Views.push(database)
         fixtures_loaded << database
       end
     end
