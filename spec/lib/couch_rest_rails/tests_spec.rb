@@ -3,29 +3,38 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 describe CouchRestRails::Tests do
   
   before :each do
-    CouchRest.delete(COUCHDB_CONFIG[:full_path]) rescue nil
-    CouchRestRails.fixtures_path = 'vendor/plugins/couchrest-rails/spec/mock/fixtures'
-    CouchRestRails.views_path = 'vendor/plugins/couchrest-rails/spec/mock/views'
+    setup_foo_bars
   end
   
   after :all do
-    CouchRest.delete(COUCHDB_CONFIG[:full_path]) rescue nil
+    cleanup_foo_bars
   end
   
   describe '#setup' do
     
-    it 'should delete, add and load fixtures for the test database' do
+    it 'should delete, add, push views and load fixtures for the specified database' do
       
-      # Create a dirty db first...
-      CouchRestRails::Database.create
-      db = CouchRest.database(COUCHDB_CONFIG[:full_path])
-      CouchRestRails::Fixtures.load
+      CouchRestRails::Database.create('foo')
+      db = CouchRest.database(@foo_db_url)
+      CouchRestRails::Fixtures.load('foo')
       db.documents['rows'].size.should == 10
       
-      CouchRestRails::Tests.setup
+      CouchRestRails::Tests.setup('foo')
       db.documents['rows'].size.should == 12 # Includes design docs
       db.view('foos/all')['rows'].size.should == 5
     
+    end
+    
+    it 'should delete, add, push views and load fixtures for all databases if none are specified' do
+      CouchRestRails::Database.create('foo')
+      dbf = CouchRest.database(@foo_db_url)
+      dbb = CouchRest.database(@bar_db_url)
+      CouchRestRails::Fixtures.load
+      db.documents['rows'].size.should == 10
+
+      CouchRestRails::Tests.setup
+      db.documents['rows'].size.should == 12 # Includes design docs
+      db.view('foos/all')['rows'].size.should == 5
     end
     
   end

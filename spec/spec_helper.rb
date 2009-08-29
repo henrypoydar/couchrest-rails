@@ -5,7 +5,39 @@ rescue LoadError
   exit
 end
 
-def cleanup_view_paths
+def setup_foo_bars
+  
+  # Config
+  CouchRestRails.use_lucene = true
+  CouchRestRails.views_path = 'vendor/plugins/couchrest-rails/spec/mock/couch'
+  CouchRestRails.lucene_path = 'vendor/plugins/couchrest-rails/spec/mock/couch'
+  
+  # Paths
+  @foo_db_name = [
+    COUCHDB_CONFIG[:db_prefix], 'foo',
+    COUCHDB_CONFIG[:db_suffix]
+  ].join
+  @foo_db_url = [
+    COUCHDB_CONFIG[:host_path], "/",
+    @foo_db_name 
+  ].join
+  @bar_db_name = @foo_db_name.gsub(/foo/, 'bar')
+  @bar_db_url = @foo_db_url.gsub(/foo/, 'bar')
+  
+  # Delete existing
+  CouchRest.delete(@foo_db_url) rescue nil
+  CouchRest.delete(@bar_db_url) rescue nil
+  
+  # Reset document models
+  class CouchRestRailsTestDocumentFoo < NilClass; end
+  class CouchRestRailsTestDocumentBar < NilClass; end
+  class CouchRestRailsTestDocumentNoDatabase < NilClass; end
+  
+end
+
+def cleanup_foo_bars
+  CouchRest.delete(@foo_db_url) rescue nil
+  CouchRest.delete(@bar_db_url) rescue nil
   ['foo', 'bar', 'foox', 'barx'].each do |db|
     FileUtils.rm_rf(File.join(RAILS_ROOT, CouchRestRails.views_path, db))
     FileUtils.rm_rf(File.join(RAILS_ROOT, CouchRestRails.lucene_path, db))

@@ -3,27 +3,11 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 describe CouchRestRails::Database do
 
   before :each do
-    CouchRestRails.use_lucene = true
-    CouchRestRails.views_path = 'vendor/plugins/couchrest-rails/spec/mock/couch'
-    CouchRestRails.lucene_path = 'vendor/plugins/couchrest-rails/spec/mock/couch'
-    @foo_db_name = [
-      COUCHDB_CONFIG[:db_prefix], 'foo',
-      COUCHDB_CONFIG[:db_suffix]
-    ].join
-    @foo_db_url = [
-      COUCHDB_CONFIG[:host_path], "/",
-      @foo_db_name 
-    ].join
-    @bar_db_name = @foo_db_name.gsub(/foo/, 'bar')
-    @bar_db_url = @foo_db_url.gsub(/foo/, 'bar')
-    CouchRest.delete(@foo_db_url) rescue nil
-    CouchRest.delete(@bar_db_url) rescue nil
+    setup_foo_bars
   end
   
   after :all do
-    CouchRest.delete(@foo_db_url) rescue nil
-    CouchRest.delete(@bar_db_url) rescue nil
-    cleanup_view_paths
+    cleanup_foo_bars
   end
   
   describe '#create' do
@@ -58,10 +42,10 @@ describe CouchRestRails::Database do
         use_database :bar
       end
       CouchRestRails::Database.create
-      f = CouchRest.get(@foo_db_url)
-      f['db_name'].should == @foo_db_name
-      b = CouchRest.get(@bar_db_url)
-      b['db_name'].should == @bar_db_name
+      dbf = CouchRest.get(@foo_db_url)
+      dbf['db_name'].should == @foo_db_name
+      dbb = CouchRest.get(@bar_db_url)
+      dbb['db_name'].should == @bar_db_name
     end
     
     it 'should issue a warning if no CouchRestRails::Document models are using the database' do

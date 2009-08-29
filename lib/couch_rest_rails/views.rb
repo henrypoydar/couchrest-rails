@@ -56,17 +56,16 @@ module CouchRestRails
     # Assemble views from file-system path design_doc_path
     def assemble_views(design_doc_path)
       views = {}
-
       Dir.glob(File.join(design_doc_path, '*')).each do |view_folder|
         view = {}
         map_file    = File.join(view_folder, 'map.js')
         reduce_file = File.join(view_folder, 'reduce.js')
-
         view[:map]    = IO.read(map_file)    if File.exist?(map_file)
         view[:reduce] = IO.read(reduce_file) if File.exist?(reduce_file) && File.size(reduce_file) > 0
         views[File.basename(view_folder)] = view if view[:map]
       end
       views
     end
+    
   end
 end

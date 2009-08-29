@@ -3,21 +3,12 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 describe CouchRestRails::Fixtures do
   
   before :each do
-    CouchRestRails.use_lucene = false
-    CouchRestRails.views_path = 'vendor/plugins/couchrest-rails/spec/mock/couch'
-    CouchRestRails.fixtures_path = 'vendor/plugins/couchrest-rails/spec/mock/fixtures'
-    @foo_db_name = [
-      COUCHDB_CONFIG[:db_prefix], 'foo',
-      COUCHDB_CONFIG[:db_suffix]
-    ].join
-    @foo_db_url = [
-      COUCHDB_CONFIG[:host_path], "/",
-      @foo_db_name 
-    ].join
-    @bar_db_name = @foo_db_name.gsub(/foo/, 'bar')
-    @bar_db_url = @foo_db_url.gsub(/foo/, 'bar')
+    setup_foo_bars
   end
   
+  after :all do
+    cleanup_foo_bars
+  end
   
   describe '#blurbs' do
     
