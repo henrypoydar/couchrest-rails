@@ -25,7 +25,7 @@ describe CouchRestRails::Tests do
       db.documents['rows'].size.should == 10
       
       CouchRestRails::Tests.setup('foo')
-      db.documents['rows'].size.should == 12 # Includes design docs
+      db.documents['rows'].size.should == 11 # Includes design docs
       db.view("#{@foo_db_name}/all")['rows'].size.should == 10
     end
     
@@ -40,8 +40,8 @@ describe CouchRestRails::Tests do
       (dbf.documents['rows'].size + dbb.documents['rows'].size).should == 15
 
       CouchRestRails::Tests.setup
-      (dbf.documents['rows'].size + dbb.documents['rows'].size).should == 18 # Includes design docs
-      (dbf.view("#{@foo_db_name}/all")['rows'].size + dbb.view("#{@foo_db_name}/all")['rows'].size).should == 15
+      (dbf.documents['rows'].size + dbb.documents['rows'].size).should == 17 # Includes design docs
+      (dbf.view("#{@foo_db_name}/all")['rows'].size + dbb.view("#{@bar_db_name}/all")['rows'].size).should == 15
     end
     
   end

@@ -32,7 +32,7 @@ describe CouchRestRails::Views do
       CouchRestRails::Tests.setup
       dbf = CouchRest.database(@foo_db_url)
       dbb = CouchRest.database(@bar_db_url)
-      (dbf.view("#{@foo_db_name}/all")['rows'].size + dbb.view("#{@foo_db_name}/all")['rows'].size).should == 15
+      (dbf.view("#{@foo_db_name}/all")['rows'].size + dbb.view("#{@bar_db_name}/all")['rows'].size).should == 15
     end
   
   end
