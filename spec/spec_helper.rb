@@ -5,11 +5,21 @@ rescue LoadError
   exit
 end
 
+module ResetFooBarClasses
+  # Reset document models
+  class CouchRestRailsTestDocumentFoo < NilClass; end
+  class CouchRestRailsTestDocumentBar < NilClass; end
+  class CouchRestRailsTestDocumentNoDatabase < NilClass; end
+end
+
+
 def setup_foo_bars
+  include ResetFooBarClasses
   
   # Config
   CouchRestRails.use_lucene = true
   CouchRestRails.views_path = 'vendor/plugins/couchrest-rails/spec/mock/couch'
+  CouchRestRails.fixtures_path = 'vendor/plugins/couchrest-rails/spec/mock/fixtures'
   CouchRestRails.lucene_path = 'vendor/plugins/couchrest-rails/spec/mock/couch'
   
   # Paths
@@ -27,11 +37,6 @@ def setup_foo_bars
   # Delete existing
   CouchRest.delete(@foo_db_url) rescue nil
   CouchRest.delete(@bar_db_url) rescue nil
-  
-  # Reset document models
-  class CouchRestRailsTestDocumentFoo < NilClass; end
-  class CouchRestRailsTestDocumentBar < NilClass; end
-  class CouchRestRailsTestDocumentNoDatabase < NilClass; end
   
 end
 

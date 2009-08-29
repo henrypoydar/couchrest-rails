@@ -27,7 +27,7 @@ describe CouchRestRails::Fixtures do
     after :each do
       CouchRestRails::Database.delete('foo')
       CouchRestRails::Database.delete('bar')
-      cleanup_view_paths
+      cleanup_foo_bars
     end
     
     it "should notify if the specified database doesn't exist" do
@@ -76,7 +76,7 @@ describe CouchRestRails::Fixtures do
         CouchRestRails::Database.delete("#{db}x")
         FileUtils.rm_rf(File.join(RAILS_ROOT, CouchRestRails.fixtures_path, "#{db}x.yml"))
       end
-      cleanup_view_paths
+      cleanup_foo_bars
     end
     
     it "should dump fixtures for the specified database" do
