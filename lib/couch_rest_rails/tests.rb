@@ -23,7 +23,6 @@ module CouchRestRails
     def teardown(database = "*")
       ENV['RAILS_ENV'] = CouchRestRails.test_environment
       CouchRestRails::Database.delete(database)
-      CouchRestRails::Database.create(database)
       fixtures_loaded.delete(database)
     end
   end

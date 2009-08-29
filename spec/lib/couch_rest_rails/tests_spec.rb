@@ -4,6 +4,7 @@ describe CouchRestRails::Tests do
   
   before :each do
     setup_foo_bars
+    CouchRestRails.views_path = 'vendor/plugins/couchrest-rails/spec/mock/views'
   end
   
   after :all do
@@ -12,8 +13,12 @@ describe CouchRestRails::Tests do
   
   describe '#setup' do
     
+    it 'should always use the test environment' do
+      RAILS_ENV.should == CouchRestRails.test_environment
+    end
+    
     it 'should delete, add, push views and load fixtures for the specified database' do
-      
+      # Dirty up a db first
       CouchRestRails::Database.create('foo')
       db = CouchRest.database(@foo_db_url)
       CouchRestRails::Fixtures.load('foo')
@@ -21,32 +26,43 @@ describe CouchRestRails::Tests do
       
       CouchRestRails::Tests.setup('foo')
       db.documents['rows'].size.should == 12 # Includes design docs
-      db.view('foos/all')['rows'].size.should == 5
-    
+      db.view("#{@foo_db_name}/all")['rows'].size.should == 10
     end
     
     it 'should delete, add, push views and load fixtures for all databases if none are specified' do
+      # Dirty up dbs first
       CouchRestRails::Database.create('foo')
+      CouchRestRails::Database.create('bar')
       dbf = CouchRest.database(@foo_db_url)
       dbb = CouchRest.database(@bar_db_url)
-      CouchRestRails::Fixtures.load
-      db.documents['rows'].size.should == 10
+      CouchRestRails::Fixtures.load('foo')
+      CouchRestRails::Fixtures.load('bar')
+      (dbf.documents['rows'].size + dbb.documents['rows'].size).should == 15
 
       CouchRestRails::Tests.setup
-      db.documents['rows'].size.should == 12 # Includes design docs
-      db.view('foos/all')['rows'].size.should == 5
+      (dbf.documents['rows'].size + dbb.documents['rows'].size).should == 18 # Includes design docs
+      (dbf.view("#{@foo_db_name}/all")['rows'].size + dbb.view("#{@foo_db_name}/all")['rows'].size).should == 15
     end
     
   end
   
   describe '#teardown' do
     
-    it 'should delete the test database' do
+    it 'should always use the test environment' do
+      RAILS_ENV.should == CouchRestRails.test_environment
+    end
+    
+    it 'should delete the specified test database' do
+      CouchRestRails::Tests.setup('foo')
+      CouchRestRails::Tests.teardown('foo')
+      lambda {CouchRest.get(@foo_db_url)}.should raise_error('Resource not found')
+    end
+    
+    it 'should delete all of the test databases if none are specified' do
       CouchRestRails::Tests.setup
-      db = CouchRest.database(COUCHDB_CONFIG[:full_path])
-      db.documents['rows'].size.should == 12 # Includes design docs
       CouchRestRails::Tests.teardown
-      lambda {CouchRest.get(COUCHDB_CONFIG[:full_path])}.should raise_error('Resource not found')
+      lambda {CouchRest.get(@foo_db_url)}.should raise_error('Resource not found')
+      lambda {CouchRest.get(@bar_db_url)}.should raise_error('Resource not found')
     end
     
   end

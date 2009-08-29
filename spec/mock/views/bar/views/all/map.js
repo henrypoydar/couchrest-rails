@@ -1,9 +1,7 @@
 function(doc) {
-  if(doc.type == 'Bar') {
-    emit(doc.question, {
-      answer : doc.answer,
-      rating : doc.rating,
-      created_at : doc.created_at
-    });
-  }
+  emit(doc.created_at, {
+    title : doc.title,
+    body : doc.body,
+    created_at : doc.created_at
+  });
 };

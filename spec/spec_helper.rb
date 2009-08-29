@@ -41,10 +41,13 @@ def setup_foo_bars
 end
 
 def cleanup_foo_bars
+
   CouchRest.delete(@foo_db_url) rescue nil
   CouchRest.delete(@bar_db_url) rescue nil
+
   ['foo', 'bar', 'foox', 'barx'].each do |db|
-    FileUtils.rm_rf(File.join(RAILS_ROOT, CouchRestRails.views_path, db))
-    FileUtils.rm_rf(File.join(RAILS_ROOT, CouchRestRails.lucene_path, db))
+    FileUtils.rm_rf(File.join(RAILS_ROOT, 'vendor/plugins/couchrest-rails/spec/mock/couch', db))
+    FileUtils.rm_rf(File.join(RAILS_ROOT, 'vendor/plugins/couchrest-rails/spec/mock/couch', db))
   end
+
 end

@@ -3,9 +3,8 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 describe CouchRestRails::Views do
   
   before :each do
-    CouchRestRails.views_path = 'vendor/plugins/couchrest-rails/spec/mock/views'
-    CouchRestRails.fixtures_path = 'vendor/plugins/couchrest-rails/spec/mock/fixtures'
     setup_foo_bars
+    CouchRestRails.views_path = 'vendor/plugins/couchrest-rails/spec/mock/views'
   end
   
   after :all do
