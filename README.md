@@ -136,11 +136,13 @@ If you want to support Lucene full-text searching of CouchDB documents, enable s
 
     CouchRestRails.use_lucene  = true
     
-The Lucene design documents are stored alongside the views:
+The Lucene design documents per database are stored alongside the views:
     
     db/couch/<database_name>/lucene
                                |-- <design_document_name>
-                                   |-- <lucene_search>
+                                   |-- <lucene_search>.js
+                                   |-- <lucene_search>.js
+                                   |-- ...
 
 You can also customize this path:
 
