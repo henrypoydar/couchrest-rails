@@ -30,6 +30,13 @@ describe CouchRestRails::Tests do
     end
     
     it 'should delete, add, push views and load fixtures for all databases if none are specified' do
+      class CouchRestRailsTestDocumentFoo < CouchRestRails::Document 
+        use_database :foo
+      end 
+      class CouchRestRailsTestDocumentBar < CouchRestRails::Document 
+        use_database :bar
+      end
+      
       # Dirty up dbs first
       CouchRestRails::Database.create('foo')
       CouchRestRails::Database.create('bar')
@@ -39,8 +46,8 @@ describe CouchRestRails::Tests do
       CouchRestRails::Fixtures.load('bar')
       (dbf.documents['rows'].size + dbb.documents['rows'].size).should == 15
 
-      CouchRestRails::Tests.reset_fixtures
       CouchRestRails::Tests.setup
+
       (dbf.documents['rows'].size + dbb.documents['rows'].size).should == 17 # Includes design docs
       (dbf.view("default/all")['rows'].size + dbb.view("default/all")['rows'].size).should == 15
     end

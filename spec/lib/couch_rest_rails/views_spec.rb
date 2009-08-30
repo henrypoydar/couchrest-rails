@@ -28,7 +28,13 @@ describe CouchRestRails::Views do
       res.should =~ /Overwriting/
     end
     
-    it "should push the views in CouchRestRails.views_path to a design document for all databases if * is passed" do
+    it "should push the views in CouchRestRails.views_path to a design document for all databases if * or no arg is passed" do
+      class CouchRestRailsTestDocumentFoo < CouchRestRails::Document 
+        use_database :foo
+      end 
+      class CouchRestRailsTestDocumentBar < CouchRestRails::Document 
+        use_database :bar
+      end
       CouchRestRails::Tests.setup
       dbf = CouchRest.database(@foo_db_url)
       dbb = CouchRest.database(@bar_db_url)

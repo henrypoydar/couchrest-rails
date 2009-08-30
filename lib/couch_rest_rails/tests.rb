@@ -5,15 +5,17 @@ module CouchRestRails
     mattr_accessor :fixtures_loaded
     self.fixtures_loaded = Set.new
 
-    def setup(database = "*", opts = {})
+    def setup(database_name = '*', opts = {})
+      res = ''
       ENV['RAILS_ENV'] = CouchRestRails.test_environment
-      unless fixtures_loaded.include?(database)
-        CouchRestRails::Database.delete(database, opts)
-        CouchRestRails::Database.create(database, opts)
-        CouchRestRails::Fixtures.load(database, opts)
-        CouchRestRails::Views.push(database, opts)
-        fixtures_loaded << database
+      if !opts[:skip_if_fixtures_loaded] && !fixtures_loaded.include?(database_name)
+        res += CouchRestRails::Database.delete(database_name, opts)
+        res += CouchRestRails::Database.create(database_name, opts)
+        res += CouchRestRails::Fixtures.load(database_name, opts)
+        res += CouchRestRails::Views.push(database_name, opts)
+        fixtures_loaded << database_name
       end
+      res
     end
 
     def reset_fixtures
@@ -21,10 +23,10 @@ module CouchRestRails
       fixtures_loaded.clear
     end
 
-    def teardown(database = "*")
+    def teardown(database_name = "*")
       ENV['RAILS_ENV'] = CouchRestRails.test_environment
-      CouchRestRails::Database.delete(database)
-      fixtures_loaded.delete(database)
+      CouchRestRails::Database.delete(database_name)
+      fixtures_loaded.delete(database_name)
     end
   end
 end
