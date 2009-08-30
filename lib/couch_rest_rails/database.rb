@@ -3,7 +3,7 @@ module CouchRestRails
 
     extend self
     
-    def create(database_name = '*')
+    def create(database_name = '*', opts = {})
       
       CouchRestRails.process_database_method(database_name) do |db, response|
         
@@ -43,7 +43,7 @@ module CouchRestRails
 
     end
 
-    def delete(database_name = '*')
+    def delete(database_name = '*', opts = {})
       
       CouchRestRails.process_database_method(database_name) do |db, response|
       

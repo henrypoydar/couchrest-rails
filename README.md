@@ -29,7 +29,7 @@ This plugin assumes some knowledge of CouchDB and its important differences from
 
 Install with the native Rails plugin installation script:
 
-    script/plugin install git://github.com/hpoydar/couchrest_rails.git
+    script/plugin install git://github.com/hpoydar/couchrest-rails.git
 
 Or simply add to vendor/plugins and generate the files you need:
 
@@ -140,7 +140,7 @@ The Lucene design documents are stored alongside the views:
     
     db/couch/<database_name>/lucene
                                |-- <design_document_name>
-                                     |-- <lucene_search>
+                                   |-- <lucene_search>
 
 You can also customize this path:
 

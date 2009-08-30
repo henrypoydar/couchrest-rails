@@ -5,13 +5,13 @@ module CouchRestRails
     mattr_accessor :fixtures_loaded
     self.fixtures_loaded = Set.new
 
-    def setup(database = "*")
+    def setup(database = "*", opts = {})
       ENV['RAILS_ENV'] = CouchRestRails.test_environment
       unless fixtures_loaded.include?(database)
-        CouchRestRails::Database.delete(database)
-        CouchRestRails::Database.create(database)
-        CouchRestRails::Fixtures.load(database)
-        CouchRestRails::Views.push(database)
+        CouchRestRails::Database.delete(database, opts)
+        CouchRestRails::Database.create(database, opts)
+        CouchRestRails::Fixtures.load(database, opts)
+        CouchRestRails::Views.push(database, opts)
         fixtures_loaded << database
       end
     end

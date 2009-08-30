@@ -26,7 +26,7 @@ describe CouchRestRails::Tests do
       
       CouchRestRails::Tests.setup('foo')
       db.documents['rows'].size.should == 11 # Includes design docs
-      db.view("#{@foo_db_name}/all")['rows'].size.should == 10
+      db.view("default/all")['rows'].size.should == 10
     end
     
     it 'should delete, add, push views and load fixtures for all databases if none are specified' do
@@ -39,9 +39,10 @@ describe CouchRestRails::Tests do
       CouchRestRails::Fixtures.load('bar')
       (dbf.documents['rows'].size + dbb.documents['rows'].size).should == 15
 
+      CouchRestRails::Tests.reset_fixtures
       CouchRestRails::Tests.setup
       (dbf.documents['rows'].size + dbb.documents['rows'].size).should == 17 # Includes design docs
-      (dbf.view("#{@foo_db_name}/all")['rows'].size + dbb.view("#{@bar_db_name}/all")['rows'].size).should == 15
+      (dbf.view("default/all")['rows'].size + dbb.view("default/all")['rows'].size).should == 15
     end
     
   end
