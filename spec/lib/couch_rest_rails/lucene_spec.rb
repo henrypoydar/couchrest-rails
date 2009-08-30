@@ -14,16 +14,17 @@ describe CouchRestRails::Views do
   describe '#push' do
   
     it "should push the Lucene search in CouchRestRails.lucene_path to a design document for the specified database" do
-      res = CouchRestRails::Database.delete('foo')
-      res = CouchRestRails::Database.create('foo')
-      res = CouchRestRails::Fixtures.load('foo')
-      res = CouchRestRails::Lucene.push('foo')
+      CouchRestRails::Database.delete('foo')
+      CouchRestRails::Database.create('foo')
+      CouchRestRails::Fixtures.load('foo')
+      CouchRestRails::Lucene.push('foo')
       db = CouchRest.database(@foo_db_url)      
       db.get("_design/default")['fulltext'].should_not be_blank
     end
     
     it "should replace existing searches but issue a warning" do
-      CouchRestRails::Tests.setup('foo')
+      CouchRestRails::Database.delete('foo')
+      CouchRestRails::Database.create('foo')
       CouchRestRails::Lucene.push('foo')
       res = CouchRestRails::Lucene.push('foo')
       res.should =~ /Overwriting/

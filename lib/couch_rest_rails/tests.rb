@@ -8,7 +8,7 @@ module CouchRestRails
     def setup(database_name = '*', opts = {})
       res = ''
       ENV['RAILS_ENV'] = CouchRestRails.test_environment
-      if !opts[:skip_if_fixtures_loaded] && !fixtures_loaded.include?(database_name)
+      unless opts[:skip_if_fixtures_loaded] && fixtures_loaded.include?(database_name)
         res += CouchRestRails::Database.delete(database_name, opts)
         res += CouchRestRails::Database.create(database_name, opts)
         res += CouchRestRails::Fixtures.load(database_name, opts)

@@ -73,6 +73,12 @@ describe CouchRestRails::Database do
     it 'should delete all databases as defined in CouchRestRails::Document models when no argument is specified' do
       CouchRest.database!(@foo_db_url)
       CouchRest.database!(@bar_db_url)
+      class CouchRestRailsTestDocumentFoo < CouchRestRails::Document 
+        use_database :foo
+      end 
+      class CouchRestRailsTestDocumentBar < CouchRestRails::Document 
+        use_database :bar
+      end
       CouchRestRails::Database.delete
       lambda {CouchRest.get(@foo_db_url)}.should raise_error('Resource not found')
       lambda {CouchRest.get(@bar_db_url)}.should raise_error('Resource not found')

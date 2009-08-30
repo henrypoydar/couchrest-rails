@@ -24,6 +24,7 @@ describe CouchRestRails::Views do
     
     it "should replace existing views but issue a warning" do
       CouchRestRails::Tests.setup('foo')
+      CouchRestRails::Views.push('foo')
       res = CouchRestRails::Views.push('foo')
       res.should =~ /Overwriting/
     end
