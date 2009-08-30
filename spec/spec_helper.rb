@@ -5,16 +5,14 @@ rescue LoadError
   exit
 end
 
-module ResetFooBarClasses
-  # Reset document models
-  class CouchRestRailsTestDocumentFoo < NilClass; end
-  class CouchRestRailsTestDocumentBar < NilClass; end
-  class CouchRestRailsTestDocumentNoDatabase < NilClass; end
-end
-
-
 def setup_foo_bars
-  include ResetFooBarClasses
+
+  # Unset classes
+  Object.class_eval do
+    ['CouchRestRailsTestDocumentFoo', 'CouchRestRailsTestDocumentBar', 'CouchRestRailsTestDocumentNoDatabase'].each do |klass|
+      remove_const klass.to_s if const_defined? klass.to_s
+    end
+  end
   
   # Config
   CouchRestRails.use_lucene = true

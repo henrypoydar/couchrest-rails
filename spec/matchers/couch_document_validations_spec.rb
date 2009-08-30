@@ -5,7 +5,8 @@ describe Spec::Rails::Matchers do
   describe 'validations' do
     
     before :all do
-      class CouchFoo < CouchRestRails::Document  
+      class CouchRestRailsTestDocumentFoo < CouchRestRails::Document 
+        use_database :foo
         
         property  :something_present
         property  :something_long
@@ -18,7 +19,7 @@ describe Spec::Rails::Matchers do
         validates_numericality_of :something_numeric
 
       end
-      @couch_foo = CouchFoo.new
+      @couch_foo = CouchRestRailsTestDocumentFoo.new
     end
     
     # Use lengthy matcher names so as not to interfere with 
