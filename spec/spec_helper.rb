@@ -9,8 +9,8 @@ def setup_foo_bars
 
   # Unset classes
   Object.class_eval do
-    ['CouchRestRailsTestDocumentFoo', 'CouchRestRailsTestDocumentBar', 'CouchRestRailsTestDocumentNoDatabase'].each do |klass|
-      remove_const klass.to_s if const_defined? klass.to_s
+    Object.subclasses_of(CouchRestRails::Document).collect do |klass|
+      remove_const klass.name if const_defined? klass.name
     end
   end
   
