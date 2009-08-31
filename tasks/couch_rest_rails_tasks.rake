@@ -2,14 +2,14 @@ namespace :couchdb do
 
   desc "Create the CouchDB database defined in config/couchdb.yml for the current environment"
   task :create, :database, :needs => :environment do |t, args|
-      args.with_defaults(:database => "*")
-      puts CouchRestRails::Database.create(args.database)
+    args.with_defaults(:database => "*", :opts => {})
+    puts CouchRestRails::Database.create(args.database, args.opts)
   end
 
   desc "Deletes the CouchDB database for the current RAILS_ENV"
   task :delete, :database, :needs => :environment do |t, args|
-      args.with_defaults(:database => "*")
-      puts CouchRestRails::Database.delete(args.database)
+    args.with_defaults(:database => "*", :opts => {})
+    puts CouchRestRails::Database.delete(args.database, args.opts)
   end
 
   desc "Deletes and recreates the CouchDB database for the current RAILS_ENV"
@@ -37,17 +37,17 @@ namespace :couchdb do
 
   namespace :views do
     desc "Push views into the current environment's CouchDB database"
-    task :push, :database, :design_doc, :needs => :environment do |t, args|
-      args.with_defaults(:database => "*", :design_doc => "*")
-      puts CouchRestRails::Views.push(args.database, args.design_doc)
+    task :push, :database, :needs => :environment do |t, args|
+      args.with_defaults(:database => "*", :opts => {})
+      puts CouchRestRails::Views.push(args.database, args.opts)
     end
   end
 
   namespace :lucene do
     desc "Push views into the current environment's CouchDB database"
-    task :push, :database, :design_doc, :needs => :environment do |t, args|
-      args.with_defaults(:database => "*", :design_doc => "*")
-      puts CouchRestRails::Lucene.push(args.database, args.design_doc)
+    task :push, :database, :needs => :environment do |t, args|
+      args.with_defaults(:database => "*", :opts => {})
+      puts CouchRestRails::Lucene.push(args.database, args.opts)
     end
   end
 

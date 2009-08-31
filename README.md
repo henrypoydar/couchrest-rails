@@ -166,13 +166,20 @@ _Please don't submit any pull requests with failing specs_
 
 * Roll up CouchRest::ExtendedDocument, since it might be deprecated from CouchRest (see CouchRest raw branch)
 * A persistent connection object? Keep-alive?
-* Error class for CouchRestRails::Document with I18n support
 * Hook into Rails logger to display times for CouchDB operations
 * Mechanism for better view testing?
 * Restful model/controller/test/spec generator
+* Error class for CouchRestRails::Document with I18n support
 * Support a default database for all CouchRestRails::Document models
 * Gemify
 * Add more parseable options to couchdb.yml
+
+## Contributors / Thanks
+
+* Arnaud Berthomier
+* Dave Farkas
+* Adam Keyes
+* John Wood
 
 ## License
 
