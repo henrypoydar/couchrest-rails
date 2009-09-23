@@ -33,7 +33,7 @@ Install with the native Rails plugin installation script:
 
 Or simply add to vendor/plugins and generate the files you need:
 
-    script/generate couch_rest_rails relax
+    script/generate couch_rest_rails
     
 The plugin creates two folders:
 
@@ -59,11 +59,12 @@ Database names are defined in the `CouchRestRails::Document` models that use the
 
 Use the rake tasks to create databases, delete databases, reset databases, push views and load fixtures:
 
+    rake couchdb:create[database]             # Create a CouchDB database defined in config/couchdb.yml for the current environment (use no database argument to use all databases defined in CouchRestRails::Document models)
     rake couchdb:delete[database]             # Deletes a CouchDB database for the current RAILS_ENV (use no database argument to use all databases defined in CouchRestRails::Document models)
     rake couchdb:fixtures:load[database]      # Load fixtures into a current environment's CouchDB database (use no database argument to use all databases defined in CouchRestRails::Document models)
-    rake couchdb:lucene:push[database]        # Push views into a current environment's CouchDB database (use no database argument to use all databases defined in CouchRestRails::Document models)
-    rake couchdb:views:push[database]         # Push Lucene views into a current environment's CouchDB database (use no database argument to use all databases defined in CouchRestRails::Document models)
-    
+    rake couchdb:lucene:push[database]        # Push Lucene views into a current environment's CouchDB database (use no database argument to use all databases defined in CouchRestRails::Document models)
+    rake couchdb:views:push[database]         # Push views into a current environment's CouchDB database (use no database argument to use all databases defined in CouchRestRails::Document models)
+    rake doc:plugins:couchrest-rails          # Generate documentation for the couchrest-rails plugin
     
 ### CouchRestRails document model
 

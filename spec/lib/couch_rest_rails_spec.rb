@@ -22,7 +22,7 @@ describe 'CouchRestRails' do
     
     it "should generate the necessary files in the host application" do
       Rails::Generator::Scripts::Generate.new.run(
-        ['couchrest_rails', 'relax'], :destination => @fake_rails_root)
+        ['couchrest_rails'], :destination => @fake_rails_root)
       Dir.glob(File.join(@fake_rails_root, "**", "*.*")).map {|f| File.basename(f)}.should == 
         ['couchdb.yml', 'couchdb.rb']
     end
