@@ -26,7 +26,7 @@ module CouchRestRails
         full_db_name = [COUCHDB_CONFIG[:db_prefix], File.basename(db), COUCHDB_CONFIG[:db_suffix]].join
         
         # Warn if no model uses the database
-        unless CouchRestRails::Database.list.include?(full_db_name)
+        unless CouchRestRails::Database.list.include?(db)
           response << "WARNING: there are no CouchRestRails::Document models using #{db}"
         end
         
@@ -73,6 +73,8 @@ module CouchRestRails
 
     def list
       databases = []
+      # Ensure models are loaded
+      Dir.glob(File.join(RAILS_ROOT, 'app', 'models', '*.rb')).map { |m| require_dependency m }
       Object.subclasses_of(CouchRestRails::Document).collect do |doc|
         raise "#{doc.name} does not have a database defined" unless doc.database
         databases << doc.unadorned_database_name

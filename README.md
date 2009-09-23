@@ -59,7 +59,11 @@ Database names are defined in the `CouchRestRails::Document` models that use the
 
 Use the rake tasks to create databases, delete databases, reset databases, push views and load fixtures:
 
-    rake -T | grep couchdb  
+    rake couchdb:delete[database]             # Deletes a CouchDB database for the current RAILS_ENV (use no database argument to use all databases defined in CouchRestRails::Document models)
+    rake couchdb:fixtures:load[database]      # Load fixtures into a current environment's CouchDB database (use no database argument to use all databases defined in CouchRestRails::Document models)
+    rake couchdb:lucene:push[database]        # Push views into a current environment's CouchDB database (use no database argument to use all databases defined in CouchRestRails::Document models)
+    rake couchdb:views:push[database]         # Push views into a current environment's CouchDB database (use no database argument to use all databases defined in CouchRestRails::Document models)
+    
     
 ### CouchRestRails document model
 
