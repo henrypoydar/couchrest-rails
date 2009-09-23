@@ -33,7 +33,7 @@ namespace :couchdb do
   end
 
   namespace :lucene do
-    desc "Push views into a current environment's CouchDB database (use no database argument to use all databases defined in CouchRestRails::Document models)"
+    desc "Push Lucene views into a current environment's CouchDB database (use no database argument to use all databases defined in CouchRestRails::Document models)"
     task :push, :database, :needs => :environment do |t, args|
       args.with_defaults(:database => "*", :opts => {})
       puts CouchRestRails::Lucene.push(args.database, args.opts)
