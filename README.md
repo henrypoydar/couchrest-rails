@@ -184,7 +184,9 @@ _Please don't submit any pull requests with failing specs_
 * Arnaud Berthomier
 * Dave Farkas
 * Adam Keyes
+* Glenn Rempe
 * John Wood
+
 
 ## License
 
