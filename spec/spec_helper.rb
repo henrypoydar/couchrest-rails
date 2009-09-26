@@ -5,6 +5,8 @@ rescue LoadError
   exit
 end
 
+require File.dirname(__FILE__) + '/../lib/spec/rails/matchers/couch_document_validations'
+
 def setup_foo_bars
 
   # Unset classes
