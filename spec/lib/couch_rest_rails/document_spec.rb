@@ -2,12 +2,14 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 describe CouchRestRails::Document do
   
-  class CouchRestRailsTestDocument < CouchRestRails::Document 
+  test_class = class CouchRestRailsTestDocument < CouchRestRails::Document 
     use_database :foo
+    
+    self
   end
   
   before :each do
-    @doc = CouchRestRailsTestDocument.new
+    @doc = test_class.new
   end
   
   it "should inherit from CouchRest::ExtendedDocument" do
@@ -21,7 +23,7 @@ describe CouchRestRails::Document do
   describe '.unadorned_database_name' do
     
     it "should return the database name without the prefix and suffix" do
-      CouchRestRailsTestDocument.unadorned_database_name.should == 'foo'
+      test_class.unadorned_database_name.should == 'foo'
     end
     
   end
