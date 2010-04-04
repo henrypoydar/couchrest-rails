@@ -45,6 +45,15 @@ describe CouchRestRails::Views do
       dbb.get("_design/default")['fulltext'].should_not be_blank
     end
   
+    it "should create default design documents with a view field" do
+      CouchRestRails::Database.delete('foo')
+      CouchRestRails::Database.create('foo')
+      CouchRestRails::Fixtures.load('foo')
+      CouchRestRails::Lucene.push('foo')
+      db = CouchRest.database(@foo_db_url)      
+      db.get("_design/default")['views'].should_not be_nil
+    end
+
   end
   
 end

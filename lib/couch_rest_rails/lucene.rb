@@ -55,6 +55,7 @@ module CouchRestRails
             couchdb_design_doc = {
               "_id" => "_design/#{File.basename(doc)}", 
               'language' => 'javascript',
+ 	      'views' => {},
               'fulltext' => searches
             }
           else
