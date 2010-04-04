@@ -63,14 +63,14 @@ describe CouchRestRails::Tests do
     it 'should delete the specified test database' do
       CouchRestRails::Tests.setup('foo')
       CouchRestRails::Tests.teardown('foo')
-      lambda {CouchRest.get(@foo_db_url)}.should raise_error('Resource not found')
+      lambda {CouchRest.get(@foo_db_url)}.should raise_error(RestClient::ResourceNotFound)
     end
     
     it 'should delete all of the test databases if none are specified' do
       CouchRestRails::Tests.setup
       CouchRestRails::Tests.teardown
-      lambda {CouchRest.get(@foo_db_url)}.should raise_error('Resource not found')
-      lambda {CouchRest.get(@bar_db_url)}.should raise_error('Resource not found')
+      lambda {CouchRest.get(@foo_db_url)}.should raise_error(RestClient::ResourceNotFound)
+      lambda {CouchRest.get(@bar_db_url)}.should raise_error(RestClient::ResourceNotFound)
     end
     
   end

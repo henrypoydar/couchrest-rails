@@ -62,7 +62,7 @@ describe CouchRestRails::Database do
     it 'should delete the specified CouchDB database for the current environment' do
       CouchRest.database!(@foo_db_url)
       CouchRestRails::Database.delete('foo')
-      lambda {CouchRest.get(@foo_db_url)}.should raise_error('Resource not found')
+      lambda {CouchRest.get(@foo_db_url)}.should raise_error(RestClient::ResourceNotFound)
     end
 
     it 'should do nothing and display a message if the database does not exist' do
@@ -80,8 +80,8 @@ describe CouchRestRails::Database do
         use_database :bar
       end
       CouchRestRails::Database.delete
-      lambda {CouchRest.get(@foo_db_url)}.should raise_error('Resource not found')
-      lambda {CouchRest.get(@bar_db_url)}.should raise_error('Resource not found')
+      lambda {CouchRest.get(@foo_db_url)}.should raise_error(RestClient::ResourceNotFound)
+      lambda {CouchRest.get(@bar_db_url)}.should raise_error(RestClient::ResourceNotFound)
     end
     
     it 'should warn if the views path for the database still exists' do
