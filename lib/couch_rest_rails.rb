@@ -19,6 +19,8 @@ module CouchRestRails
     # If wildcard passed, use model definitions for database names
     if database_name == '*'
       databases = CouchRestRails::Database.list
+    elsif database_name.is_a? Array
+      databases = database_name
     else
       databases = [database_name]
     end
